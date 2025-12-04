@@ -1,50 +1,50 @@
 # AI Text Enhancer Pro 🚀
 
-**Профессиональный инструмент для редактирования текста, рефакторинга кода и перевода с использованием LLM (GPT-4o, Claude 3.5 Sonnet, Mistral).**
+**A professional tool for text editing, code refactoring, and translation using LLM (GPT-4o, Claude 3.5 Sonnet, Mistral).**
 
-В отличие от обычных чатов, этот инструмент предлагает профессиональный UI (VS Code style), стриминг ответов, умную подсветку синтаксиса и мощную систему промптов.
+Unlike typical chatbots, this tool offers a professional UI (VS Code style), streaming responses, smart syntax highlighting, and a powerful prompt system.
 
 ![Main Interface](screen_main.png)
 
-## ✨ Ключевые возможности
+## ✨ Key Features
 
-- **⚡ Streaming:** Моментальный вывод текста (побуквенно), без ожидания полной генерации.
-- **🎨 Code Highlighting:** Автоматическое определение языков и подсветка синтаксиса (JetBrains Mono шрифт).
-- **📋 Smart Copy:** Умное копирование блоков кода и всего текста с визуальным подтверждением.
-- **🧠 Prompt Manager:** Система переключения ролей (Редактор, Переводчик, Code Refactor) "на лету".
-- **📊 Stats:** Подсчет токенов и примерной стоимости запроса в реальном времени.
+- **⚡ Streaming:** Instantly outputs text character by character, with no wait for full generation.
+- **🎨 Code Highlighting:** Automatic language detection and syntax highlighting (JetBrains Mono font).
+- **📋 Smart Copy:** Intelligent code block and full text copying with visual confirmation.
+- **🧠 Prompt Manager:** On-the-fly role switching (Editor, Translator, Code Refactor).
+- **📊 Stats:** Real-time token count and request cost estimation.
 
-### 🔍 Режим Diff (Сравнение)
-Визуальное сравнение изменений: удаленный текст подсвечивается красным, добавленный — зеленым. Идеально для редактуры и ревью кода.
+### 🔍 Diff Mode
+Visual comparison of changes: deleted text is highlighted in red, added text in green. Perfect for editing and code review.
 
 ![Diff View Mode](screen_diff.png)
 
 ---
 
-## 🛠 Установка
+## 🛠 Installation
 
-### 1. Клонирование репозитория
-```
+### 1. Clone the Repository
+```bash
 git clone https://github.com/YOUR_USERNAME/TextEnhancerWeb.git
 cd TextEnhancerWeb
 ```
 
-### 2. Установка зависимостей
-Убедитесь, что у вас установлен Python 3.8+.
-```
+### 2. Install Dependencies
+Ensure you have Python 3.8+ installed.
+```bash
 pip install -r requirements.txt
 ```
-Библиотека httpx обязательна для работы стриминга.
+The httpx library is required for streaming.
 
-### 3. Настройка API ключа
-Проект использует OpenRouter для доступа к нейросетям.
+### 3. Set Up API Key
+The project uses OpenRouter for neural network access.
 
-1. Получите ключ на openrouter.ai.
-2. Создайте в папке проекта файл openrouter_api_key.txt.
-3. Вставьте туда ваш ключ (одной строкой, без пробелов).
+1. Obtain a key from openrouter.ai.
+2. Create a file named openrouter_api_key.txt in the project directory.
+3. Insert your key (one line, no spaces).
 
-### 4. Настройка Промптов
-Убедитесь, что у вас есть папка prompts/ с файлами .txt. Например:
+### 4. Configure Prompts
+Make sure you have a prompts/ folder with .txt files. For example:
 
 ```
 Default.txt
@@ -52,26 +52,25 @@ CodeFormatter.txt
 TranslatorToEN.txt
 ```
 
-🚀 Запуск
+🚀 Launch
 
-1. Запустите сервер:
-```
+1. Start the server:
+```bash
 python server.py
 ```
 
-Вы увидите сообщение:
+You'll see a message:
 ```
 Uvicorn running on http://0.0.0.0:8000.
 ```
 
-2. Откройте файл index.html в любом современном браузере (или перейдите по адресу, если настроили раздачу статики, но просто открыть файл тоже сработает).
+2. Open the index.html file in any modern browser (or navigate to the address if you've set up static serving, opening the file will also work).
 
-
-🖥 Использование
-1. Вставьте текст в левое окно (Input).
-2. Выберите модель (например, GPT-4o) и Промпт.
-3. Нажмите Run Processor (или Ctrl+Enter).
-4. Наблюдайте результат в правом окне.
-5. Используйте кнопку Diff, чтобы увидеть точные правки.
+🖥 Usage
+1. Paste your text into the left pane (Input).
+2. Select a model (e.g., GPT-4o) and a Prompt.
+3. Click Run Processor (or press Ctrl+Enter).
+4. View the result in the right pane.
+5. Use the Diff button to see precise edits.
 
 License: MIT
