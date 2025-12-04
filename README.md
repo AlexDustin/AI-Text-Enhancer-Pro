@@ -48,7 +48,7 @@ The project uses OpenRouter for neural network access.
 ### 4. Prompt System (Important!)
 
 The system uses a secure architecture.
-If you want to create custom prompts, use the template prompts/_BOILERPLATE_UNIVERSAL.txt as a base.
+If you want to create custom prompts, use the template prompts/prompt_template.txt as a base.
 
 Why? The backend automatically wraps user input in XML tags. Your system prompt must instruct the LLM to treat content inside these tags as raw data.
 
@@ -77,4 +77,5 @@ python server.py
 
 📄 License
 MIT
+
 
