@@ -4,7 +4,7 @@
 
 Unlike typical chatbots, this tool offers a professional UI (VS Code style), streaming responses, smart syntax highlighting, and a powerful prompt system.
 
-![Main Interface](screen_main.png?v=2)
+![Main Interface](screen_main.png)
 
 ## ✨ Key Features
 
@@ -17,7 +17,7 @@ Unlike typical chatbots, this tool offers a professional UI (VS Code style), str
 ### 🔍 Diff Mode
 Visual comparison of changes: deleted text is highlighted in red, added text in green. Perfect for editing and code review.
 
-![Diff View Mode](screen_diff.png?v=2)
+![Diff View Mode](screen_diff.png)
 
 ---
 
@@ -74,5 +74,6 @@ Uvicorn running on http://0.0.0.0:8000.
 5. Use the Diff button to see precise edits.
 
 License: MIT
+
 
 
