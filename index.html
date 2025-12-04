@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Editor Pro v2.0</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Styles & Libs -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <!-- Diff Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
+
+    <style>
+        :root {
+            --bg-app: #0d1117;
+            --bg-panel: #161b22;
+            --bg-input: #0d1117;
+            --border: #30363d;
+            --border-hover: #8b949e;
+            --accent: #2f81f7;
+            --accent-hover: #58a6ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --success: #238636;
+            --del-bg: rgba(218, 54, 51, 0.2);
+            --add-bg: rgba(35, 134, 54, 0.2);
+            --header-height: 50px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        /* --- Toolbar --- */
+        .toolbar {
+            height: var(--header-height);
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* --- ЛОГОТИП (FIXED: Справа + Не обрезается) --- */
+        .app-logo {
+            display: flex;
+            align-items: center;
+            
+            /* ИЗМЕНЕНИЕ 1: Выравниваем содержимое вправо (к кнопкам Preview) */
+            justify-content: flex-end; 
+            
+            gap: 8px;
+            flex: 1; 
+            user-select: none;
+            min-width: 150px;
+            
+            /* ИЗМЕНЕНИЕ 2: Добавляем воздух справа, чтобы не прилипало к кнопкам */
+            padding-right: 24px; 
+        }
+
+        .app-logo svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--accent);
+        }
+
+        .app-logo-text {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+        }
+
+        .app-logo-pro {
+            background: linear-gradient(135deg, #2f81f7, #d2a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-style: italic;
+            margin-left: 2px;
+            font-size: 13px;
+            
+            /* ИЗМЕНЕНИЕ 3: Лечим обрезанную букву "o" */
+            padding-right: 4px; 
+        }
+
+        /* Скрываем на мобильных */
+        @media (max-width: 1100px) {
+            .app-logo { display: none; }
+        }
+
+        .toolbar-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-right: 6px;
+        }
+
+        select, button { font-family: inherit; font-size: 13px; outline: none; }
+
+        select {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 8px;
+            height: 28px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        select:hover { border-color: var(--border-hover); }
+        select:focus { border-color: var(--accent); }
+
+        .btn {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            padding: 0 12px;
+            height: 28px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .btn:hover { background-color: #21262d; border-color: var(--border-hover); }
+        .btn:active { transform: translateY(1px); }
+        
+        .btn-primary {
+            background-color: #1f6feb;
+            color: white;
+            border: 1px solid rgba(240, 246, 252, 0.1);
+        }
+        .btn-primary:hover { background-color: #388bfd; border-color: rgba(240, 246, 252, 0.1); }
+
+        /* New Copy Button Style */
+        .btn-copy-action {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 12px;
+            padding: 0 12px;
+            height: 26px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .btn-copy-action:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+            background-color: rgba(255,255,255,0.05);
+        }
+        .btn-copy-action.success {
+            background-color: rgba(35, 134, 54, 0.2);
+            border-color: #238636;
+            color: #3fb950;
+        }
+        
+        .btn-group {
+            display: flex;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 2px;
+        }
+        .btn-group-item {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 2px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-group-item.active {
+            background: #30363d;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .spacer { flex: 1; }
+        .divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+        /* --- Main Layout --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            padding: 8px;
+            gap: 8px;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-width: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .panel-header {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .panel-title { font-weight: 600; color: var(--text-main); font-size: 13px; letter-spacing: 0.02em; }
+        .panel-tools { display: flex; gap: 12px; align-items: center; }
+        
+        .char-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* --- Editors --- */
+        .editor-container { flex: 1; position: relative; overflow: hidden; }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            color: var(--text-main);
+            border: none;
+            resize: none;
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            outline: none;
+            font-family: inherit;
+        }
+        textarea::placeholder { color: #484f58; }
+
+        /* --- Rich Output --- */
+        .rich-output {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 15px;
+            line-height: 1.7;
+            word-wrap: break-word;
+            color: #e6edf3;
+        }
+
+        /* Diff Styling */
+        .diff-view { white-space: pre-wrap; font-family: inherit; }
+        .diff-del { background-color: var(--del-bg); text-decoration: line-through; color: #ffa198; padding: 2px 0; }
+        .diff-add { background-color: var(--add-bg); color: #7ee787; padding: 2px 0; }
+
+        /* Markdown Elements */
+        .rich-output h1, .rich-output h2, .rich-output h3 {
+            color: white; margin-top: 24px; margin-bottom: 12px; font-weight: 600; line-height: 1.25;
+        }
+        .rich-output h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+        .rich-output h2 { font-size: 1.5em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+        .rich-output h3 { font-size: 1.25em; }
+        .rich-output p { margin-bottom: 16px; }
+        .rich-output ul, .rich-output ol { padding-left: 2em; margin-bottom: 16px; }
+        .rich-output li { margin-bottom: 4px; }
+        .rich-output blockquote {
+            border-left: 4px solid var(--accent); color: var(--text-muted);
+            padding: 8px 16px; margin: 16px 0; background: rgba(47, 129, 247, 0.1);
+            border-radius: 0 4px 4px 0;
+        }
+        .rich-output strong { color: white; font-weight: 600; }
+        .rich-output a { color: var(--accent); text-decoration: none; }
+        .rich-output a:hover { text-decoration: underline; }
+
+        /* Code Blocks */
+        .rich-output pre {
+            position: relative; margin: 16px 0; background: #0d1117;
+            border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+        }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1f242c; padding: 6px 12px; border-bottom: 1px solid var(--border);
+            font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-muted); user-select: none;
+        }
+        .code-copy-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px;
+        }
+        .code-copy-btn:hover { color: white; }
+        .code-copy-btn.copied { color: var(--success); }
+        
+        .rich-output pre code {
+            display: block; padding: 16px; overflow-x: auto; white-space: pre;
+            tab-size: 4; -moz-tab-size: 4; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            font-size: 13.5px; line-height: 1.6; background: transparent;
+            -webkit-font-smoothing: antialiased; font-variant-ligatures: normal; color: #e6edf3;
+        }
+        .rich-output :not(pre) > code {
+            background: rgba(110, 118, 129, 0.2); padding: 0.2em 0.4em;
+            border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+            font-size: 85%; color: var(--text-main);
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 5px; border: 2px solid var(--bg-panel); }
+        ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--bg-panel); border-top: 1px solid var(--border);
+            padding: 4px 12px; font-size: 12px; color: var(--text-muted);
+            display: flex; justify-content: space-between; flex-shrink: 0;
+        }
+        .status-indicator {
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; margin-right: 6px; background: var(--text-muted);
+        }
+        .status-bar.processing .status-indicator { background: var(--accent); animation: pulse 1s infinite; }
+        .status-bar.error .status-indicator { background: #da3633; }
+        .status-bar.ready .status-indicator { background: var(--success); }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        
+        .stats-item { margin-left: 16px; font-family: 'JetBrains Mono', monospace; }
+        .stats-label { opacity: 0.6; margin-right: 4px; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(2px); z-index: 100; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px;
+            width: 1200px; height: 80vh; max-width: 95%; max-height: 95vh;
+            display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .modal-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-weight: 600; font-size: 16px; }
+        .modal-body { flex: 1; overflow: hidden; display: flex; }
+        .prompt-sidebar { width: 250px; border-right: 1px solid var(--border); overflow-y: auto; padding: 8px; }
+        .prompt-preview-area { flex: 1; padding: 0; display: flex; flex-direction: column; }
+        .prompt-item {
+            padding: 10px 12px; border-radius: 6px; cursor: pointer;
+            margin-bottom: 4px; transition: background 0.2s;
+        }
+        .prompt-item:hover { background: #21262d; }
+        .prompt-item.active { background: var(--accent); color: white; }
+        .prompt-text-display {
+            flex: 1; background: #0d1117; border: none; padding: 16px;
+            color: var(--text-muted); resize: none; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Top Toolbar -->
+    <div class="toolbar">
+        <!-- ЛЕВАЯ ГРУППА КНОПОК -->
+        <div>
+            <span class="toolbar-label">Модель</span>
+            <select id="modelSelect">
+                <option value="openai/gpt-4o">GPT-4o</option>
+                <option value="anthropic/claude-sonnet-4.5">Claude 4.5 Sonnet</option>
+                <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                <option value="mistralai/mistral-large-2411">Mistral Large</option>
+            </select>
+        </div>
+        <div class="divider"></div>
+        <div>
+            <span class="toolbar-label">Промпт</span>
+            <select id="promptSelect" style="min-width: 150px;"></select>
+        </div>
+        <button class="btn" id="managePromptsBtn">⚙️</button>
+        <div class="divider"></div>
+        
+        <button class="btn btn-primary" id="sendBtn">
+            <span id="sendBtnText">Run Processor</span>
+            <span style="font-size:10px; opacity:0.7; margin-left:4px;">(Ctrl+Enter)</span>
+        </button>
+
+        <!-- ЛОГОТИП (Один единственный, стоит посередине как разделитель) -->
+        <div class="app-logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L14.5 7.5L20 10L14.5 12.5L12 18L9.5 12.5L4 10L9.5 7.5L12 2Z"/>
+            </svg>
+            <span class="app-logo-text">AI Text Enhancer <span class="app-logo-pro">Pro</span></span>
+        </div>
+        
+        <!-- ПРАВАЯ ГРУППА КНОПОК -->
+        <div class="btn-group">
+            <button class="btn-group-item active" id="viewPreviewBtn">Preview</button>
+            <button class="btn-group-item" id="viewDiffBtn">Diff</button>
+        </div>
+
+        <div class="divider"></div>
+        <button class="btn" id="swapBtn">⇄ Swap</button>
+        <div class="divider"></div>
+        
+        <div>
+            <span class="toolbar-label">Вид</span>
+            <select id="fontSelect">
+                <option value="'Inter', -apple-system, sans-serif">Inter (UI)</option>
+                <option value="charter, Georgia, serif">Charter (Serif)</option>
+                <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+            </select>
+            <select id="fontSizeSelect" style="width: 70px;">
+                <option value="14">14px</option>
+                <option value="15" selected>15px</option>
+                <option value="16">16px</option>
+                <option value="18">18px</option>
+            </select>
+        </div>
+        
+        <!-- ВТОРОЙ ЛОГОТИП ОТСЮДА Я УДАЛИЛ -->
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        <!-- Left Panel: Input -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">INPUT</span>
+                <div class="panel-tools">
+                    <span class="char-counter" id="inputCounter">0 chars</span>
+                    <button class="btn btn-icon-only" id="clearInputBtn" title="Clear">✕</button>
+                </div>
+            </div>
+            <div class="editor-container">
+                <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+            </div>
+        </div>
+
+        <!-- Right Panel: Output -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">OUTPUT</span>
+                <div class="panel-tools">
+                    <span class="char-counter" id="outputCounter">0 chars</span>
+                    <button class="btn btn-copy-action" id="copyBtn">
+                        <span>📋</span> Копировать
+                    </button>
+                </div>
+            </div>
+            <div class="editor-container" style="background: #0d1117;">
+                <textarea id="outputText" style="display: none;"></textarea>
+                <!-- Container for Markdown/Diff -->
+                <div class="rich-output" id="richOutput">
+                    <div style="color: var(--text-muted); display: flex; height: 100%; align-items: center; justify-content: center; flex-direction: column; gap: 10px;">
+                        <div style="font-size: 40px; opacity: 0.2;">⌨️</div>
+                        <div>Ready to process</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+        <div style="display: flex; align-items: center;">
+            <span class="status-indicator"></span>
+            <span id="statusText">Ready</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span class="stats-item"><span class="stats-label">Tokens:</span><span id="statsTokens">0</span></span>
+            <span class="stats-item"><span class="stats-label">Est. Cost:</span><span id="statsCost">$0.000</span></span>
+            <span class="stats-item" style="margin-left:20px;" id="statusTime"></span>
+        </div>
+    </div>
+
+    <!-- Prompts Modal -->
+    <div class="modal-overlay" id="promptModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Prompt Library</span>
+                <button class="btn btn-icon-only" id="closeModalBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="prompt-sidebar" id="promptList"></div>
+                <div class="prompt-preview-area">
+                    <textarea id="promptPreview" readonly class="prompt-text-display"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+
+        const el = {
+            fontSelect: document.getElementById("fontSelect"),
+            fontSizeSelect: document.getElementById("fontSizeSelect"),
+            modelSelect: document.getElementById("modelSelect"),
+            promptSelect: document.getElementById("promptSelect"),
+            sendBtn: document.getElementById("sendBtn"),
+            sendBtnText: document.getElementById("sendBtnText"),
+            swapBtn: document.getElementById("swapBtn"),
+            copyBtn: document.getElementById("copyBtn"),
+            managePromptsBtn: document.getElementById("managePromptsBtn"),
+            clearInputBtn: document.getElementById("clearInputBtn"),
+            viewPreviewBtn: document.getElementById("viewPreviewBtn"),
+            viewDiffBtn: document.getElementById("viewDiffBtn"),
+            inputText: document.getElementById("inputText"),
+            outputText: document.getElementById("outputText"),
+            richOutput: document.getElementById("richOutput"),
+            inputCounter: document.getElementById("inputCounter"),
+            outputCounter: document.getElementById("outputCounter"),
+            statusBar: document.getElementById("statusBar"),
+            statusText: document.getElementById("statusText"),
+            statusTime: document.getElementById("statusTime"),
+            statsTokens: document.getElementById("statsTokens"),
+            statsCost: document.getElementById("statsCost"),
+            promptModal: document.getElementById("promptModal"),
+            closeModalBtn: document.getElementById("closeModalBtn"),
+            promptList: document.getElementById("promptList"),
+            promptPreview: document.getElementById("promptPreview")
+        };
+
+        let currentPromptText = "";
+        let promptsData = [];
+        let currentView = 'preview'; // 'preview' or 'diff'
+
+        marked.setOptions({ breaks: true, gfm: true, headerIds: false, mangle: false });
+
+        // --- Core Logic ---
+
+        function updateCounters() {
+            const inLen = el.inputText.value.length;
+            const outLen = el.outputText.value.length;
+            el.inputCounter.textContent = `${inLen} chars`;
+            el.outputCounter.textContent = `${outLen} chars`;
+            
+            // Simple Token Estimation (Roughly 1 token ~ 3.5 chars for mixed text)
+            const estimatedTokens = Math.ceil((inLen + outLen) / 3.5);
+            el.statsTokens.textContent = `~${estimatedTokens}`;
+            
+            // Cost Estimation (Based on GPT-4o avg blend ~$10/1M tokens = $0.00001 per token)
+            // This is a very rough approximation
+            const estCost = (estimatedTokens * 0.00001).toFixed(4);
+            el.statsCost.textContent = `$${estCost}`;
+        }
+
+        function renderContent() {
+            if (currentView === 'diff') {
+                renderDiff();
+            } else {
+                renderRichText();
+            }
+        }
+
+        function renderRichText() {
+            const rawText = el.outputText.value;
+            if (!rawText && !el.inputText.value) { // Show placeholder only if both empty
+                 el.richOutput.innerHTML = '<div style="color: var(--text-muted); display: flex; height: 100%; align-items: center; justify-content: center; flex-direction: column; gap: 10px;"><div style="font-size: 40px; opacity: 0.2;">⌨️</div><div>Ready to process</div></div>';
+                 return;
+            }
+            if (!rawText) { el.richOutput.innerHTML = ''; return; }
+
+            let html = marked.parse(rawText);
+            html = DOMPurify.sanitize(html);
+            el.richOutput.innerHTML = html;
+
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+                enhanceCodeBlock(block);
+            });
+            applyStyles();
+        }
+
+        function renderDiff() {
+            const oldText = el.inputText.value;
+            const newText = el.outputText.value;
+            
+            if (!oldText || !newText) {
+                el.richOutput.innerHTML = '<div style="padding:20px; color:var(--text-muted)">Need both Input and Output text to show Diff.</div>';
+                return;
+            }
+
+            // Using JsDiff to diff words (better for text than chars)
+            const diff = Diff.diffWords(oldText, newText);
+            const fragment = document.createDocumentFragment();
+            const div = document.createElement('div');
+            div.className = 'diff-view';
+
+            diff.forEach((part) => {
+                const span = document.createElement('span');
+                span.style.whiteSpace = 'pre-wrap';
+                if (part.added) {
+                    span.className = 'diff-add';
+                    span.textContent = part.value;
+                } else if (part.removed) {
+                    span.className = 'diff-del';
+                    span.textContent = part.value;
+                } else {
+                    span.textContent = part.value;
+                }
+                div.appendChild(span);
+            });
+            
+            el.richOutput.innerHTML = '';
+            el.richOutput.appendChild(div);
+            applyStyles();
+        }
+
+        function enhanceCodeBlock(codeElement) {
+            const pre = codeElement.parentElement;
+            const langClass = Array.from(codeElement.classList).find(c => c.startsWith('language-'));
+            const langName = langClass ? langClass.replace('language-', '') : 'text';
+            
+            const header = document.createElement('div');
+            header.className = 'code-header';
+            
+            const langSpan = document.createElement('span');
+            langSpan.textContent = langName.toUpperCase();
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'code-copy-btn';
+            copyBtn.innerHTML = '<span>📋</span> Copy';
+            
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(codeElement.innerText);
+                    copyBtn.innerHTML = '<span>✓</span> Copied!';
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<span>📋</span> Copy';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {}
+            });
+
+            header.appendChild(langSpan);
+            header.appendChild(copyBtn);
+            pre.insertBefore(header, codeElement);
+        }
+
+        function applyStyles() {
+            const font = el.fontSelect.value;
+            const size = el.fontSizeSelect.value + 'px';
+            el.inputText.style.fontFamily = font === 'Inter' ? "'Inter', sans-serif" : font;
+            el.inputText.style.fontSize = size;
+            el.richOutput.style.fontFamily = font;
+            el.richOutput.style.fontSize = size;
+        }
+
+        function setStatus(msg, type = 'ready', time = '') {
+            el.statusText.textContent = msg;
+            el.statusTime.textContent = time;
+            el.statusBar.className = `status-bar ${type}`;
+        }
+
+        // --- Streaming Request ---
+        async function sendRequest() {
+            const text = el.inputText.value.trim();
+            if (!text) return setStatus("Please enter text", "error");
+            if (!currentPromptText) return setStatus("Select a prompt", "error");
+
+            el.sendBtn.disabled = true;
+            el.sendBtnText.textContent = "Stop"; // Button becomes Stop button
+            
+            // Switch to Preview if in Diff mode
+            if (currentView === 'diff') {
+                currentView = 'preview';
+                updateViewButtons();
+            }
+
+            el.outputText.value = ""; // Clear previous output
+            renderRichText();
+            setStatus("Thinking...", "processing");
+            
+            const start = performance.now();
+            
+            // Setup AbortController for Stop button
+            const controller = new AbortController();
+            const signal = controller.signal;
+            
+            // Temporary Stop Handler
+            const stopHandler = () => {
+                controller.abort();
+                el.sendBtn.removeEventListener('click', stopHandler);
+                finishRequest(start, "Stopped");
+            };
+            el.sendBtn.onclick = stopHandler;
+
+            try {
+                const response = await fetch(`${API_BASE}/edit_stream`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        text: text,
+                        system: currentPromptText,
+                        model: el.modelSelect.value
+                    }),
+                    signal: signal
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    // Process NDJSON (New-line Delimited JSON)
+                    const lines = buffer.split("\n");
+                    buffer = lines.pop(); // Keep partial line in buffer
+
+                    for (const line of lines) {
+                        if (!line.trim()) continue;
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.error) {
+                                throw new Error(data.error);
+                            }
+                            if (data.token) {
+                                el.outputText.value += data.token;
+                                // Update UI roughly every chunk (smooth typing)
+                                renderRichText();
+                                updateCounters();
+                            }
+                        } catch (e) { console.error("Parse error", e); }
+                    }
+                }
+                
+                finishRequest(start, "Completed");
+
+            } catch (e) {
+                if (e.name === 'AbortError') {
+                    // Handled in stopHandler
+                } else {
+                    console.error(e);
+                    setStatus("Error processing", "error");
+                }
+                finishRequest(start, "Error");
+            }
+        }
+
+        function finishRequest(startTime, statusMsg) {
+            const seconds = ((performance.now() - startTime) / 1000).toFixed(2);
+            setStatus(statusMsg, statusMsg === "Error" ? "error" : "ready", `${seconds}s`);
+            
+            // Reset button
+            el.sendBtn.disabled = false;
+            el.sendBtnText.textContent = "Run Processor";
+            el.sendBtn.onclick = sendRequest; // Restore original handler
+        }
+
+        // --- View Switching ---
+        function updateViewButtons() {
+            if (currentView === 'preview') {
+                el.viewPreviewBtn.classList.add('active');
+                el.viewDiffBtn.classList.remove('active');
+            } else {
+                el.viewPreviewBtn.classList.remove('active');
+                el.viewDiffBtn.classList.add('active');
+            }
+            renderContent();
+        }
+
+        el.viewPreviewBtn.addEventListener('click', () => { currentView = 'preview'; updateViewButtons(); });
+        el.viewDiffBtn.addEventListener('click', () => { currentView = 'diff'; updateViewButtons(); });
+
+
+        // --- Standard Listeners ---
+        async function loadPrompts() {
+            try {
+                const res = await fetch(`${API_BASE}/prompts`);
+                if (!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                promptsData = data.prompts;
+                el.promptSelect.innerHTML = "";
+                promptsData.forEach(name => {
+                    const opt = document.createElement("option");
+                    opt.value = name; opt.textContent = name;
+                    el.promptSelect.appendChild(opt);
+                });
+                if (promptsData.length > 0) loadPrompt(promptsData[0]);
+            } catch (e) { setStatus("Failed prompts", "error"); }
+        }
+
+        async function loadPrompt(name) {
+            try {
+                const res = await fetch(`${API_BASE}/prompt?name=${encodeURIComponent(name)}`);
+                const data = await res.json();
+                currentPromptText = data.text;
+                el.promptSelect.value = name;
+                setStatus(`Loaded: ${name}`);
+            } catch (e) {}
+        }
+
+        el.inputText.addEventListener('input', updateCounters);
+        
+        el.clearInputBtn.addEventListener('click', () => {
+            if(confirm('Clear input?')) { el.inputText.value = ''; updateCounters(); }
+        });
+
+        el.copyBtn.addEventListener('click', async () => {
+            const text = el.outputText.value;
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalHtml = '<span>📋</span> Копировать';
+                el.copyBtn.innerHTML = '<span>✓</span> Скопировано';
+                el.copyBtn.classList.add('success');
+                setStatus("Copied to clipboard");
+                setTimeout(() => {
+                    el.copyBtn.innerHTML = originalHtml;
+                    el.copyBtn.classList.remove('success');
+                }, 2000);
+            } catch (e) { setStatus("Copy failed", "error"); }
+        });
+
+        el.swapBtn.addEventListener('click', () => {
+            const temp = el.inputText.value;
+            el.inputText.value = el.outputText.value;
+            el.outputText.value = "";
+            renderRichText();
+            updateCounters();
+            setStatus("Swapped");
+        });
+
+        el.fontSelect.addEventListener('change', applyStyles);
+        el.fontSizeSelect.addEventListener('change', applyStyles);
+        el.promptSelect.addEventListener('change', (e) => loadPrompt(e.target.value));
+        
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') sendRequest();
+        });
+
+        el.managePromptsBtn.addEventListener('click', () => { el.promptModal.classList.add('active'); renderPromptList(); });
+        el.closeModalBtn.addEventListener('click', () => el.promptModal.classList.remove('active'));
+        el.promptModal.addEventListener('click', (e) => { if (e.target === el.promptModal) el.promptModal.classList.remove('active'); });
+
+        function renderPromptList() {
+            el.promptList.innerHTML = '';
+            promptsData.forEach(name => {
+                const div = document.createElement('div');
+                div.className = `prompt-item ${name === el.promptSelect.value ? 'active' : ''}`;
+                div.textContent = name;
+                div.onclick = async () => {
+                    document.querySelectorAll('.prompt-item').forEach(i => i.classList.remove('active'));
+                    div.classList.add('active');
+                    await loadPrompt(name);
+                    el.promptPreview.value = currentPromptText;
+                };
+                el.promptList.appendChild(div);
+            });
+            el.promptPreview.value = currentPromptText;
+        }
+
+        el.sendBtn.onclick = sendRequest;
+        loadPrompts();
+        applyStyles();
+        updateCounters();
+    </script>
+</body>
+</html>
