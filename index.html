@@ -826,7 +826,21 @@
         el.inputText.addEventListener('input', updateCounters);
         
         el.clearInputBtn.addEventListener('click', () => {
-            if(confirm('Clear input?')) { el.inputText.value = ''; updateCounters(); }
+            // Можно поменять текст вопроса на более точный
+            if(confirm('Clear entire workspace?')) { 
+                el.inputText.value = ''; 
+                el.outputText.value = '';
+                renderRichText(); 
+                updateCounters(); 
+                
+                // Ставим статус "Очищено"
+                setStatus("Workspace cleared", "ready");
+
+                // Через 2 секунды возвращаем "Ready"
+                setTimeout(() => {
+                    setStatus("Ready", "ready");
+                }, 2000);
+            }
         });
 
         el.copyBtn.addEventListener('click', async () => {
@@ -889,4 +903,5 @@
         updateCounters();
     </script>
 </body>
+
 </html>
