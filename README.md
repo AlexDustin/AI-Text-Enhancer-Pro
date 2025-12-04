@@ -1,6 +1,6 @@
 # AI Text Enhancer Pro 🚀
 
-**A professional tool for text editing, code refactoring, and translation using LLM (GPT-4o, Claude 3.5 Sonnet, Mistral).**
+**A professional tool for text editing, code refactoring, and translation using LLM (GPT-4o, Claude 3.5 Sonnet, Mistral and so on).**
 
 Unlike typical chatbots, this tool offers a professional UI (VS Code style), streaming responses, smart syntax highlighting, and a powerful prompt system.
 
@@ -74,6 +74,7 @@ Uvicorn running on http://0.0.0.0:8000.
 5. Use the Diff button to see precise edits.
 
 License: MIT
+
 
 
 
