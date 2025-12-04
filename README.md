@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 The project uses OpenRouter for neural network access.
 
-1. Obtain a key from openrouter.ai.
+1. Obtain a key from [openrouter.ai](https://openrouter.ai)
 2. Create a file named openrouter_api_key.txt in the project directory.
 3. Insert your key (one line, no spaces).
 
@@ -77,3 +77,4 @@ python server.py
 
 📄 License
 MIT
+
