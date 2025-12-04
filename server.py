@@ -90,14 +90,14 @@ async def stream_generator(text: str, system: str, model: str):
     }
 
     payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": text},
-        ],
-        "stream": True, # Включаем режим стриминга
-        # "stream_options": {"include_usage": True} # OpenRouter иногда поддерживает это, но не всегда стабильно
-    }
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system},
+                # ВАЖНО: Оборачиваем ввод в теги, чтобы изолировать инъекции
+                {"role": "user", "content": f"<text_to_edit>\n{text}\n</text_to_edit>"},
+            ],
+            "stream": True,
+        }
 
     async with httpx.AsyncClient(timeout=60.0) as client:
         try:
