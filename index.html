@@ -228,7 +228,11 @@
         }
 
         .panel-header {
-            padding: 8px 16px;
+            /* Было padding: 8px 16px; - это плавающая высота */
+            /* Стало: фиксированная высота и центрирование */
+            height: 42px; 
+            padding: 0 16px; 
+            
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -425,6 +429,7 @@
 
         <div class="divider"></div>
         <button class="btn" id="swapBtn">⇄ Swap</button>
+        <button class="btn" id="clearBtn" style="margin-left: 6px;" title="Reset Workspace">🗑️ Clear</button>
         <div class="divider"></div>
         
         <div>
@@ -453,7 +458,7 @@
                 <span class="panel-title">INPUT</span>
                 <div class="panel-tools">
                     <span class="char-counter" id="inputCounter">0 chars</span>
-                    <button class="btn btn-icon-only" id="clearInputBtn" title="Clear">✕</button>
+                    
                 </div>
             </div>
             <div class="editor-container">
@@ -527,7 +532,7 @@
             swapBtn: document.getElementById("swapBtn"),
             copyBtn: document.getElementById("copyBtn"),
             managePromptsBtn: document.getElementById("managePromptsBtn"),
-            clearInputBtn: document.getElementById("clearInputBtn"),
+            clearBtn: document.getElementById("clearBtn"),
             viewPreviewBtn: document.getElementById("viewPreviewBtn"),
             viewDiffBtn: document.getElementById("viewDiffBtn"),
             inputText: document.getElementById("inputText"),
@@ -825,18 +830,15 @@
 
         el.inputText.addEventListener('input', updateCounters);
         
-        el.clearInputBtn.addEventListener('click', () => {
-            // Можно поменять текст вопроса на более точный
+        // Обработчик новой кнопки
+        el.clearBtn.addEventListener('click', () => {
             if(confirm('Clear entire workspace?')) { 
                 el.inputText.value = ''; 
                 el.outputText.value = '';
                 renderRichText(); 
                 updateCounters(); 
                 
-                // Ставим статус "Очищено"
                 setStatus("Workspace cleared", "ready");
-
-                // Через 2 секунды возвращаем "Ready"
                 setTimeout(() => {
                     setStatus("Ready", "ready");
                 }, 2000);
@@ -903,5 +905,4 @@
         updateCounters();
     </script>
 </body>
-
 </html>
