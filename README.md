@@ -25,8 +25,8 @@ Visual comparison of changes: deleted text is highlighted in red, added text in 
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/TextEnhancerWeb.git
-cd TextEnhancerWeb
+git clone https://github.com/AlexDustin/AI-Text-Enhancer-Pro.git
+cd AI-Text-Enhancer-Pro
 ```
 
 ### 2. Install Dependencies
@@ -74,3 +74,4 @@ Uvicorn running on http://0.0.0.0:8000.
 5. Use the Diff button to see precise edits.
 
 License: MIT
+
