@@ -5,6 +5,7 @@
 Unlike typical chatbots, this tool offers a professional UI (VS Code style), streaming responses, smart syntax highlighting, a dynamic model manager, and a **cryptographically secure** architecture.
 
 ![Main Interface](screen_main.png)
+![Main Interface](screen_diff.png)
 
 ## ✨ Key Features
 
@@ -102,5 +103,6 @@ Defaults: Click the Star (☆) icon in the Manager lists to save your favorite s
 
 📄 License
 MIT
+
 
 
