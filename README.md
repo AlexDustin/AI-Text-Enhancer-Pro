@@ -10,7 +10,7 @@ Bridging the gap between standard chatbots and professional editors, **AI Text E
 ## ✨ Key Features
 
 ### 🧠 Core Intelligence & API
-*   **Model Agnostic (OpenRouter)**: Seamlessly switch between top-tier models (GPT-4o, Claude 3.5 Sonnet, Gemini Pro, Mistral) using a single API interface.
+*   **Model Agnostic (OpenRouter)**: Seamlessly switch between top-tier models (GPT-4o, Claude 3.5 Sonnet, Gemini Pro, Mistral etc..) using a single API interface.
 *   **Smart Streaming Engine**: Real-time token streaming with **intelligent error parsing**. API errors (e.g., 404, Credit Limit) are intercepted instantly and displayed as clear alerts, preventing "fake text" generation.
 *   **Live Cost Estimation**: Real-time token counter (Input/Output) and cost calculator based on current model pricing.
 
@@ -123,6 +123,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
