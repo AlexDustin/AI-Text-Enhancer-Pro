@@ -1,4 +1,4 @@
-# AI Text Enhancer Pro (v3.0 Secure) 🚀
+# AI Text Enhancer Pro (v0.2.1 Secure) 🚀
 
 **A secure, professional tool for text editing, code refactoring, and translation using LLM (OpenRouter API).**
 
@@ -102,4 +102,5 @@ Defaults: Click the Star (☆) icon in the Manager lists to save your favorite s
 
 📄 License
 MIT
+
 
