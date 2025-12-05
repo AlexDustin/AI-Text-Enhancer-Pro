@@ -4,7 +4,10 @@ A secure, modular workspace designed for precision text processing and code enha
 
 Bridging the gap between standard chatbots and professional editors, **AI Text Enhancer Pro** provides a dedicated environment for refining content using any LLM via OpenRouter. Built with a privacy-first architecture and a streamlined dual-pane interface, it transforms raw AI generation into a controlled, transparent workflow.
 
-![Main Interface](screen_main.png)
+![Main Interface](main.png)
+**Input:** messy English + horrible one-line Python  
+**Output:** clean grammar + fully formatted code
+
 
 ## ✨ Key Features
 
@@ -26,7 +29,7 @@ Bridging the gap between standard chatbots and professional editors, **AI Text E
 *   **Symmetric Professional UI**: Polished dark theme with a dual-pane layout (Input/Output), synchronized tools, and optimized typography (`Inter` & `JetBrains Mono`).
 *   **Visual Diff View**: Instantly toggle between a rich Markdown preview and a **Diff Mode** to see exactly what the AI changed (additions in green, deletions in red).
   
-![Main Interface](screen_diff.png)
+![Main Interface](diff.png)
 
 
 ## 🛠 Installation
@@ -122,6 +125,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
