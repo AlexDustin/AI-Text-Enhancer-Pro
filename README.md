@@ -1,4 +1,4 @@
-# AI Text Enhancer Pro (v0.2.1 Secure) 🚀
+# AI Text Enhancer Pro (v1.1 Secure) 🚀
 
 **A secure, professional tool for text editing, code refactoring, and translation using LLM (OpenRouter API).**
 
@@ -9,9 +9,10 @@ Unlike typical chatbots, this tool offers a professional UI (VS Code style), str
 
 ## ✨ Key Features
 
+- **🏗️ Modular Architecture (New):** Clean separation of code (HTML/CSS/JS) ensures stability and makes the project developer-friendly.
 - **🛡️ Secure Core:** Automatic XML sandboxing (`<text_to_edit>`) prevents Prompt Injection attacks. Commands in the text are treated as data, not instructions.
-- **🔐 Local Encryption (New):** API Keys are never stored in plain text. The app uses **AES-128 (Fernet)** encryption. Keys are stored in a binary file (`api_key.bin`) and decrypted only in memory during execution.
-- **⚙️ Dynamic Model Manager:** Add any model from OpenRouter directly via UI. Your list is saved locally in the browser.
+- **🔐 Local Encryption:** API Keys are never stored in plain text. The app uses **AES-128 (Fernet)** encryption. Keys are stored in a binary file (`api_key.bin`) and decrypted only in memory during execution.
+- **⚙️ Dynamic Model Manager:** Add any model from OpenRouter directly via UI. Your list is saved locally.
 - **⭐ Favorites & Defaults:** Set your preferred Model and Prompt as default with a single click.
 - **⚡ Streaming:** Instantly outputs text character by character (Server-Sent Events).
 - **🎨 Code Highlighting:** Automatic language detection and syntax highlighting (JetBrains Mono font).
@@ -112,6 +113,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
