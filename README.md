@@ -9,14 +9,24 @@ Unlike typical chatbots, this tool offers a professional UI (VS Code style), str
 
 ## ✨ Key Features
 
-- **🏗️ Modular Architecture (New):** Clean separation of code (HTML/CSS/JS) ensures stability and makes the project developer-friendly.
-- **🛡️ Secure Core:** Automatic XML sandboxing (`<text_to_edit>`) prevents Prompt Injection attacks. Commands in the text are treated as data, not instructions.
-- **🔐 Local Encryption:** API Keys are never stored in plain text. The app uses **AES-128 (Fernet)** encryption. Keys are stored in a binary file (`api_key.bin`) and decrypted only in memory during execution.
-- **⚙️ Dynamic Model Manager:** Add any model from OpenRouter directly via UI. Your list is saved locally.
-- **⭐ Favorites & Defaults:** Set your preferred Model and Prompt as default with a single click.
-- **⚡ Streaming:** Instantly outputs text character by character (Server-Sent Events).
-- **🎨 Code Highlighting:** Automatic language detection and syntax highlighting (JetBrains Mono font).
-- **🔍 Diff Mode:** Visual comparison of changes (Red/Green diffs).
+### 🧠 Core Intelligence & API
+*   **Model Agnostic (OpenRouter)**: Seamlessly switch between top-tier models (GPT-4o, Claude 3.5 Sonnet, Gemini Pro, Mistral) using a single API interface.
+*   **Smart Streaming Engine**: Real-time token streaming with **intelligent error parsing**. API errors (e.g., 404, Credit Limit) are intercepted instantly and displayed as clear alerts, preventing "fake text" generation.
+*   **Live Cost Estimation**: Real-time token counter (Input/Output) and cost calculator based on current model pricing.
+
+### 🛠️ Advanced Workspace
+*   **System Prompt X-Ray**: A unique feature that gives you full control. Peek at and temporarily edit the hidden "System Prompt" for the current session without altering original files.
+*   **Visual Diff View**: Instantly toggle between a rich Markdown preview and a **Diff Mode** to see exactly what the AI changed (additions in green, deletions in red).
+*   **Rich Text & Code**: Full Markdown rendering with automatic syntax highlighting (Highlight.js) and one-click code copying.
+*   **Symmetric Professional UI**: Polished dark theme with a dual-pane layout (Input/Output), synchronized tools, and optimized typography (`Inter` & `JetBrains Mono`).
+
+### 🔒 Security & Architecture
+*   **AES-128 Encryption**: Your API keys are **never** stored in plain text. The app uses a local `api_key.bin` encrypted vault (Fernet/AES-128) for maximum security.
+*   **Isolation Protocol**: User input is securely wrapped in XML tags (`<text_to_edit>`) during transmission to prevent prompt injection and ensure the model focuses solely on the task.
+*   **Modular Architecture (v3.0)**: Clean separation of concerns:
+    *   **Backend**: Python/FastAPI (Async streaming, Crypto).
+    *   **Frontend**: Vanilla JS (Zero-dependency logic) + Modular CSS.
+
 
 ---
 
@@ -113,6 +123,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
