@@ -1,4 +1,4 @@
-# AI Text Enhancer Pro (v1.1 Secure) 🚀
+# AI Text Enhancer Pro 🚀
 
 A secure, modular workspace designed for precision text processing and code enhancement.
 
@@ -123,6 +123,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
