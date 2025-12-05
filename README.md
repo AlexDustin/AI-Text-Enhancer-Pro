@@ -5,7 +5,6 @@ A secure, modular workspace designed for precision text processing and code enha
 Bridging the gap between standard chatbots and professional editors, **AI Text Enhancer Pro** provides a dedicated environment for refining content using any LLM via OpenRouter. Built with a privacy-first architecture and a streamlined dual-pane interface, it transforms raw AI generation into a controlled, transparent workflow.
 
 ![Main Interface](screen_main.png)
-![Main Interface](screen_diff.png)
 
 ## ✨ Key Features
 
@@ -14,12 +13,6 @@ Bridging the gap between standard chatbots and professional editors, **AI Text E
 *   **Smart Streaming Engine**: Real-time token streaming with **intelligent error parsing**. API errors (e.g., 404, Credit Limit) are intercepted instantly and displayed as clear alerts, preventing "fake text" generation.
 *   **Live Cost Estimation**: Real-time token counter (Input/Output) and cost calculator based on current model pricing.
 
-### 🛠️ Advanced Workspace
-*   **System Prompt X-Ray**: A unique feature that gives you full control. Peek at and temporarily edit the hidden "System Prompt" for the current session without altering original files.
-*   **Visual Diff View**: Instantly toggle between a rich Markdown preview and a **Diff Mode** to see exactly what the AI changed (additions in green, deletions in red).
-*   **Rich Text & Code**: Full Markdown rendering with automatic syntax highlighting (Highlight.js) and one-click code copying.
-*   **Symmetric Professional UI**: Polished dark theme with a dual-pane layout (Input/Output), synchronized tools, and optimized typography (`Inter` & `JetBrains Mono`).
-
 ### 🔒 Security & Architecture
 *   **AES-128 Encryption**: Your API keys are **never** stored in plain text. The app uses a local `api_key.bin` encrypted vault (Fernet/AES-128) for maximum security.
 *   **Isolation Protocol**: User input is securely wrapped in XML tags (`<text_to_edit>`) during transmission to prevent prompt injection and ensure the model focuses solely on the task.
@@ -27,6 +20,13 @@ Bridging the gap between standard chatbots and professional editors, **AI Text E
     *   **Backend**: Python/FastAPI (Async streaming, Crypto).
     *   **Frontend**: Vanilla JS (Zero-dependency logic) + Modular CSS.
 
+### 🛠️ Advanced Workspace
+*   **System Prompt X-Ray**: A unique feature that gives you full control. Peek at and temporarily edit the hidden "System Prompt" for the current session without altering original files.
+*   **Rich Text & Code**: Full Markdown rendering with automatic syntax highlighting (Highlight.js) and one-click code copying.
+*   **Symmetric Professional UI**: Polished dark theme with a dual-pane layout (Input/Output), synchronized tools, and optimized typography (`Inter` & `JetBrains Mono`).
+*   **Visual Diff View**: Instantly toggle between a rich Markdown preview and a **Diff Mode** to see exactly what the AI changed (additions in green, deletions in red).
+  
+![Main Interface](screen_diff.png)
 
 ---
 
@@ -123,6 +123,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
