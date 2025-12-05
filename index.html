@@ -207,6 +207,73 @@
         .spacer { flex: 1; }
         .divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
 
+        /* API Key Modal Styles */
+        .key-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .key-input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .key-input-wrapper input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            /* ИЗМЕНЕНО: Увеличил отступ справа с 36px до 70px под две кнопки */
+            padding: 8px 70px 8px 12px; 
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .key-input-wrapper input:focus { border-color: var(--accent); }
+        .key-input-wrapper input.invalid { border-color: #da3633; color: #da3633; }
+        
+        /* Общий класс для кнопок внутри инпута */
+        .input-icon-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            transition: color 0.2s;
+        }
+        
+        .input-icon-btn:hover { color: var(--text-main); }
+
+        .btn-eye { right: 8px; }      /* Глаз справа */
+        .btn-copy-key { right: 38px; } /* Копирование левее глаза */
+
+        .key-status-msg {
+            font-size: 12px;
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+        }
+        .key-status-msg.warning { border-color: #d29922; color: #d29922; background: rgba(210, 153, 34, 0.1); }
+        .key-status-msg.valid { border-color: #238636; color: #3fb950; background: rgba(35, 134, 54, 0.1); }
+
+        /* Анимация для кнопки ключа если он не валиден */
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(218, 54, 51, 0); } 100% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0); } }
+        .btn.needs-attention {
+            border-color: #da3633;
+            color: #da3633;
+            animation: pulse-red 2s infinite;
+        }
+
         /* --- Main Layout --- */
         .main-container {
             flex: 1;
@@ -504,6 +571,9 @@
             <button class="btn-group-item" id="viewDiffBtn">Diff</button>
         </div>
 
+        <button class="btn" id="apiKeyBtn" title="API Key Settings">🔑 Key</button>
+        <div class="divider"></div>
+
         <div class="divider"></div>
         <button class="btn" id="swapBtn">⇄ Swap</button>
         <button class="btn" id="clearBtn" style="margin-left: 6px;" title="Reset Workspace">🗑️ Clear</button>
@@ -636,6 +706,42 @@
 
                 <div style="margin-top: 8px; text-align: right;">
                     <button class="btn" id="resetModelsBtn" style="font-size: 11px; opacity: 0.7;">Reset to Defaults</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="apiKeyModal">
+        <div class="modal" style="width: 500px; height: auto;">
+            <div class="modal-header">
+                <span class="modal-title">OpenRouter API Key Configuration</span>
+                <button class="btn btn-icon-only" id="closeKeyModalBtn">✕</button>
+            </div>
+            <div class="modal-body" style="flex-direction: column; padding: 20px;">
+                
+                <div id="keyStatusMsg" class="key-status-msg" style="display:none;"></div>
+
+                <div class="toolbar-label" style="margin-bottom: 6px;">API Key</div>
+                <div class="key-input-group">
+                    <div class="key-input-wrapper">
+                        <input type="password" id="apiKeyInput" placeholder="sk-or-v1-...">
+                        <!-- НОВАЯ КНОПКА -->
+                        <button class="input-icon-btn btn-copy-key" id="copyKeyBtn" title="Copy to Clipboard">📋</button>
+                        <!-- КНОПКА ГЛАЗА (обновлен класс) -->
+                        <button class="input-icon-btn btn-eye" id="toggleKeyVisBtn" title="Show/Hide">👁️</button>
+                    </div>
+                    <button class="btn btn-primary" id="saveKeyBtn">Save</button>
+                </div>
+
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 12px;">
+                    <div style="margin-bottom: 4px; color: var(--success);">🔒 <strong>Secure Storage Active</strong></div>
+                    Key is encrypted locally using <strong>AES-128 (Fernet)</strong> and saved to <code style="background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px; font-family:'JetBrains Mono';">api_key.bin</code>.
+                    <br>The server reads strictly from this encrypted file.
+                </div>
+
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: right;">
+                    <button class="btn" id="deleteKeyBtn" style="color: #da3633; border-color: rgba(218, 54, 51, 0.3);">Remove Key</button>
                 </div>
             </div>
         </div>
@@ -971,6 +1077,125 @@
             el.statusTime.textContent = time;
             el.statusBar.className = `status-bar ${type}`;
         }
+
+        // --- API Key Management ---
+        const domKey = {
+            modal: document.getElementById("apiKeyModal"),
+            btn: document.getElementById("apiKeyBtn"),
+            closeBtn: document.getElementById("closeKeyModalBtn"),
+            input: document.getElementById("apiKeyInput"),
+            saveBtn: document.getElementById("saveKeyBtn"),
+            delBtn: document.getElementById("deleteKeyBtn"),
+            toggleVisBtn: document.getElementById("toggleKeyVisBtn"),
+            copyKeyBtn: document.getElementById("copyKeyBtn"),
+            statusMsg: document.getElementById("keyStatusMsg")
+        };
+
+        async function checkApiKeyStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/api_key`);
+                const data = await res.json();
+                
+                domKey.input.value = data.key;
+                
+                if (!data.is_valid) {
+                    domKey.btn.classList.add('needs-attention');
+                    
+                    if (data.is_placeholder) {
+                        // Сценарий 1: Человек только скачал проект, там болванка
+                        showKeyMsg("⚠️ Project setup required. Please replace the default placeholder with your actual API Key.", "warning");
+                        
+                        // Auto-open modal for onboarding experience
+                        // Но делаем это только один раз за сессию, чтобы не бесить, если он закрыл
+                        if (!sessionStorage.getItem('onboarding_shown')) {
+                            domKey.modal.classList.add('active');
+                            // Принудительно показываем поле как текст, чтобы он увидел "YOUR KEY HERE"
+                            domKey.input.setAttribute('type', 'text');
+                            domKey.toggleVisBtn.style.opacity = '1';
+                            sessionStorage.setItem('onboarding_shown', 'true');
+                        }
+
+                    } else if (!data.key) {
+                        // Сценарий 2: Ключа вообще нет
+                        showKeyMsg("API Key is missing. Please enter it to start.", "warning");
+                    }
+                } else {
+                    domKey.btn.classList.remove('needs-attention');
+                    showKeyMsg("✅ Secured Storage Active. Key is valid.", "valid");
+                }
+            } catch(e) { console.error("Key check failed", e); }
+        }
+
+        function showKeyMsg(text, type) {
+            domKey.statusMsg.textContent = text;
+            domKey.statusMsg.className = `key-status-msg ${type}`;
+            domKey.statusMsg.style.display = 'block';
+        }
+
+        domKey.btn.addEventListener('click', () => {
+            // SECURITY FIX: Принудительно скрываем ключ при каждом открытии
+            domKey.input.setAttribute('type', 'password');
+            domKey.toggleVisBtn.style.opacity = '0.5';
+
+            checkApiKeyStatus(); // Загружаем актуальные данные
+            domKey.modal.classList.add('active');
+        });
+        domKey.closeBtn.addEventListener('click', () => domKey.modal.classList.remove('active'));
+        domKey.modal.addEventListener('click', (e) => { if(e.target === domKey.modal) domKey.modal.classList.remove('active'); });
+
+        domKey.toggleVisBtn.addEventListener('click', () => {
+            const type = domKey.input.getAttribute('type') === 'password' ? 'text' : 'password';
+            domKey.input.setAttribute('type', type);
+            domKey.toggleVisBtn.style.opacity = type === 'text' ? '1' : '0.5';
+        });
+
+        domKey.copyKeyBtn.addEventListener('click', async () => {
+            const key = domKey.input.value;
+            if(!key) return;
+            
+            // Копируем даже если поле скрыто (password type)
+            await navigator.clipboard.writeText(key);
+            
+            // Визуальный фидбек
+            const originalHtml = domKey.copyKeyBtn.innerHTML;
+            domKey.copyKeyBtn.innerHTML = '<span style="color:#3fb950">✓</span>';
+            setTimeout(() => {
+                domKey.copyKeyBtn.innerHTML = originalHtml;
+            }, 1500);
+        });
+
+        domKey.saveBtn.addEventListener('click', async () => {
+            const newKey = domKey.input.value.trim();
+            if(!newKey) return alert("Key cannot be empty");
+            
+            try {
+                const res = await fetch(`${API_BASE}/api_key`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: newKey })
+                });
+                const data = await res.json();
+                if(data.is_valid) {
+                    domKey.btn.classList.remove('needs-attention');
+                    showKeyMsg("Key saved successfully!", "valid");
+                    setTimeout(() => domKey.modal.classList.remove('active'), 1000);
+                } else {
+                    showKeyMsg("Key saved, but looks invalid (too short or placeholder).", "warning");
+                }
+            } catch(e) { alert("Error saving key"); }
+        });
+
+        domKey.delBtn.addEventListener('click', async () => {
+            if(confirm("Are you sure you want to remove the API Key? The app will stop working.")) {
+                await fetch(`${API_BASE}/api_key`, { method: 'DELETE' });
+                domKey.input.value = "";
+                domKey.btn.classList.add('needs-attention');
+                showKeyMsg("Key removed.", "warning");
+            }
+        });
+
+        // Init check
+        checkApiKeyStatus();
 
         // --- Streaming Request ---
         async function sendRequest() {
