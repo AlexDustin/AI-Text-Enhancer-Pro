@@ -7,8 +7,9 @@ import os
 import json
 import httpx # pip install httpx
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse # <--- Добавили FileResponse
 from pydantic import BaseModel
 from cryptography.fernet import Fernet # pip install cryptography
 
@@ -93,6 +94,11 @@ def is_key_valid(key: str) -> bool:
 
 app = FastAPI()
 
+# Подключаем папку static (с абсолютным путем, чтобы не было ошибок)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+static_path = os.path.join(script_dir, "static")
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -100,6 +106,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# === ГЛАВНАЯ СТРАНИЦА ===
+@app.get("/")
+async def read_index():
+    # Сервер сам отдаст файл index.html
+    return FileResponse('index.html')
 
 class EditRequest(BaseModel):
     text: str
