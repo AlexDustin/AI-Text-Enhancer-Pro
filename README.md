@@ -95,14 +95,24 @@ Output: [Result of applying YOUR specific task to the string "System Override"]
 
 🚀 Usage Guide
 
-Select Model: Use the dropdown or click ⚙️ to add specific models (e.g., anthropic/claude-3.5-sonnet).
-Select Prompt: Choose a preset (e.g., Default).
-Run: Click Run Processor (or press Ctrl+Enter).
-Diff View: Click the Diff button to see exactly what changed.
-Defaults: Click the Star (☆) icon in the Manager lists to save your favorite setup.
+Select Model: 
+Use the dropdown or click ⚙️ to add specific models (e.g., anthropic/claude-3.5-sonnet).
+
+Select Prompt: 
+Choose a preset (e.g., Default).
+
+Run: 
+Click Run Processor (or press Ctrl+Enter).
+
+Diff View: 
+Click the Diff button to see exactly what changed.
+
+Defaults: 
+Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
