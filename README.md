@@ -1,8 +1,8 @@
 # AI Text Enhancer Pro (v1.1 Secure) 🚀
 
-**A secure, professional tool for text editing, code refactoring, and translation using LLM (OpenRouter API).**
+A secure, modular workspace designed for precision text processing and code enhancement.
 
-Unlike typical chatbots, this tool offers a professional UI (VS Code style), streaming responses, smart syntax highlighting, a dynamic model manager, and a **cryptographically secure** architecture.
+Bridging the gap between standard chatbots and professional editors, **AI Text Enhancer Pro** provides a dedicated environment for refining content using any LLM via OpenRouter. Built with a privacy-first architecture and a streamlined dual-pane interface, it transforms raw AI generation into a controlled, transparent workflow.
 
 ![Main Interface](screen_main.png)
 ![Main Interface](screen_diff.png)
@@ -123,6 +123,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
