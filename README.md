@@ -28,7 +28,6 @@ Bridging the gap between standard chatbots and professional editors, **AI Text E
   
 ![Main Interface](screen_diff.png)
 
----
 
 ## 🛠 Installation
 
@@ -123,6 +122,7 @@ Click the Star (☆) icon in the Manager lists to save your favorite setup.
 
 📄 License
 MIT
+
 
 
 
