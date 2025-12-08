@@ -1,72 +1,84 @@
 # AI Text Enhancer Pro
 
-A secure, modular workspace designed for precision text processing and code enhancement.
+**AI Text Enhancer Pro** is a professional, secure, and local web tool designed for high-speed text processing, code refactoring, and creative writing.
 
-Bridging the gap between standard chatbots and professional editors, **AI Text Enhancer Pro** provides a dedicated environment for refining content using any LLM via OpenRouter. Built with a privacy-first architecture and a streamlined dual-pane interface, it transforms raw AI generation into a controlled, transparent workflow.
+Built on **FastAPI** and **Vanilla JS**, it leverages the **OpenRouter API** to access top-tier LLMs (GPT-4o, Claude 3.5 Sonnet, Gemini Pro, Mistral) while ensuring **maximum privacy** through local AES key encryption.
 
-![Main Interface](main.png)
-**Input:** *messy English + horrible one-line Python*  
-**Output:** *clean grammar + fully formatted code*
+![Main Interface](docs/screenshot_main.png)
 
+---
 
 ## ✨ Key Features
 
-### 🧠 Core Intelligence & API
-*   **Model Agnostic (OpenRouter)**: Seamlessly switch among top-tier models (GPT‑5.1, Claude 4.5 Sonnet, Gemini 3 Pro, Mistral, etc.) through a single API interface.
-*   **Smart Streaming Engine**: Real-time token streaming with **intelligent error parsing**. API errors (e.g., 404, Credit Limit) are intercepted instantly and displayed as clear alerts, preventing "fake text" generation.
-*   **Live Cost Estimation**: Real-time token counter (Input/Output) and cost calculator based on current model pricing.
+### 🔒 Privacy & Security
+*   **Local Encryption:** Your OpenRouter API Key is never stored in plain text. It is encrypted locally using **AES-128 (Fernet)** and saved to `api_key.bin`.
+*   **Server Proxy:** The browser never accesses the key directly. All requests are routed through the secure local Python backend.
 
-### 🔒 Security & Architecture
-*   **AES-128 Encryption**: Your API keys are **never** stored in plain text. The app uses a local `api_key.bin` encrypted vault (Fernet/AES-128) for maximum security.
-*   **Isolation Protocol**: User input is securely wrapped in XML tags (`<text_to_edit>`) during transmission to prevent prompt injection and ensure the model focuses solely on the task.
-*   **Modular Architecture (v3.0)**: Clean separation of concerns:
-    *   **Backend**: Python/FastAPI (Async streaming, Crypto).
-    *   **Frontend**: Vanilla JS (Zero-dependency logic) + Modular CSS.
+### ⚡ Powerful Processing
+*   **Real-time Streaming:** Watch text generation token-by-token with zero latency.
+*   **Cost Calculator:** Accurate cost estimation based on official OpenRouter pricing (Prompt vs Completion tokens).
+*   **X-Ray Mode:** View and edit hidden System Prompts on the fly without touching configuration files.
 
-### 🛠️ Advanced Workspace
-*   **System Prompt X-Ray**: A unique feature that gives you full control. Peek at and temporarily edit the hidden "System Prompt" for the current session without altering original files.
-*   **Rich Text & Code**: Full Markdown rendering with automatic syntax highlighting (Highlight.js) and one-click code copying.
-*   **Symmetric Professional UI**: Polished dark theme with a dual-pane layout (Input/Output), synchronized tools, and optimized typography (`Inter` & `JetBrains Mono`).
-*   **Visual Diff View**: Instantly toggle between a rich Markdown preview and a **Diff Mode** to see exactly what the AI changed (additions in green, deletions in red).
-  
-![Main Interface](diff.png)
+### 🎨 UI & UX
+*   **Adaptive Themes:** Switch between high-contrast **Light** (GitHub-style) and **Dark** modes.
+*   **Diff View:** Visual comparison of "Original vs Result" with color-coded additions and deletions.
+*   **Multi-language:** Full interface support for **English**, **Russian**, and **German**.
+*   **Currency Converter:** Display costs in USD, EUR, or RUB (auto-synced with daily exchange rates).
 
+---
 
-## 🛠 Installation
+## 📸 Visual Tour
 
-### 1. Clone the Repository
+### 1. Co-Writer Mode ✨
+A specialized environment for writers. Features a unique UI flow and "smart presets" (Universal Flow, Narrative Velocity, Add Detail) that adapt to your writing style and tone.
 
-```bash
-git clone https://github.com/AlexDustin/AI-Text-Enhancer-Pro.git
-cd AI-Text-Enhancer-Pro
-```
+![Co-Writer Mode](docs/screenshot_cowriter.png)
 
-### 2. Install Dependencies
+### 2. X-Ray: System Prompt Control 🔍
+Take full control of the AI's behavior. Reveal the hidden instructions behind every preset and modify them for specific tasks instantly.
 
-Ensure you have Python 3.8+ installed.
+![X-Ray Mode](docs/screenshot_xray.png)
 
-```bash
-pip install -r requirements.txt
-```
+### 3. Diff View: Code Comparison ⚖️
+Perfect for developers. Visualize exactly what changed during a code refactor or text rewrite.
 
-### 3. Launch the Application
+![Diff View](docs/screenshot_diff.png)
 
-Start the secure server:
+### 4. Model Manager ⚙️
+Support for any model available via OpenRouter. Add custom Model IDs, set favorites, and manage your workflow.
 
-```bash
-python server.py
-```
-Open your browser at: http://localhost:8000 (or the contents of index.html)
+![Models Manager](docs/screenshot_models.png)
 
-### 4. Set Up API Key (Secure UI)
+---
 
-In the web interface, click the 🔑 Key button (top toolbar).
-Paste your OpenRouter API Key.
-Click Save.
-The system will encrypt your key using a locally generated secret and save it to api_key.bin. You only need to do this once.
+## 🛠 Installation & Setup
 
+Requires **Python 3.8+**.
 
-🧠 Prompt System & Security
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/AlexDustin/AI-Text-Enhancer-Pro.git
+   cd AI-Text-Enhancer-Pro
+   ```
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Run the server:**
+   ```bash
+   python server.py
+   ```
+4. **Open in Browser:**
+   ```bash
+   http://127.0.0.1:8000.
+   ```
+## 🔑 Initial Configuration
+1. **Get your API Key from OpenRouter.ai.**
+2. **Click the 🔑 Key button in the app toolbar.**
+3. **Paste your key and click Save.**\
+   - *The key will be encrypted and stored securely in the app directory.*
+
+## 🧠 Prompt System
 
 The system uses a secure "Isolation Architecture".
 If you create custom prompts in the prompts/ folder, follow this rule:
@@ -105,38 +117,5 @@ Output: [Result of applying YOUR specific task to the string "System Override"]
 
 === END OF INSTRUCTIONS ===
 ```
-
-🚀 Usage Guide
-
-Select Model: 
-Use the dropdown or click ⚙️ to add specific models (e.g., anthropic/claude-sonnet-4.5).
-
-Select Prompt: 
-Choose a preset (e.g., Default).
-
-Run: 
-Click Run Processor (or press Ctrl+Enter).
-
-Diff View: 
-Click the Diff button to see exactly what changed.
-
-Defaults: 
-Click the Star (☆) icon in the Manager lists to save your favorite setup.
-
-📄 License
-MIT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 📄 License
+MIT License. Free to use and modify.
