@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Enhancer Pro</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Styles & Libs -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <!-- Diff Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="static/styles.css">
+    
+    <!-- Locales -->
+    <script src="static/locales.js"></script>
+</head>
+<body>
+
+    <!-- Top Toolbar -->
+    <div class="toolbar">
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="toolbar-label" data-i18n="toolbar.model">Model</span>
+            <div style="display: flex; gap: 4px;">
+                <select id="modelSelect" style="width: 180px;"></select>
+                <button class="btn" id="manageModelsBtn" title="Manage Models" style="padding: 0 8px;">⚙️</button>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        <div>
+            <span class="toolbar-label" data-i18n="toolbar.prompt">Prompt</span>
+            <select id="promptSelect" style="min-width: 150px;"></select>
+        </div>
+        <button class="btn" id="managePromptsBtn">⚙️</button>
+        <div class="divider"></div>
+        
+        <button class="btn" id="coWriterBtn" title="Toggle AI Co-Writer Mode" data-i18n="toolbar.cowriter">✨ Co-Writer</button>
+        <div class="divider"></div>
+
+        <button class="btn btn-primary" id="sendBtn">
+            <span id="sendBtnText" data-i18n="toolbar.run">Run Processor</span>
+            <span style="font-size:10px; opacity:0.7; margin-left:4px;">(Ctrl+Enter)</span>
+        </button>
+
+        <!-- ЛОГОТИП -->
+        <div class="app-logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L14.5 7.5L20 10L14.5 12.5L12 18L9.5 12.5L4 10L9.5 7.5L12 2Z"/>
+            </svg>
+            <span class="app-logo-text">AI Text Enhancer <span class="app-logo-pro">Pro</span></span>
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn-group-item active" id="viewPreviewBtn" data-i18n="toolbar.preview">Preview</button>
+            <button class="btn-group-item" id="viewDiffBtn" data-i18n="toolbar.diff">Diff</button>
+        </div>
+
+        <button class="btn" id="apiKeyBtn" title="API Key Settings" data-i18n="toolbar.key">🔑 Key</button>
+        <div class="divider"></div>
+        <button class="btn" id="settingsBtn" title="Global Settings" data-i18n="toolbar.settings">⚙️ Settings</button>
+        <div class="divider"></div>
+
+        <div class="divider"></div>
+        <button class="btn" id="swapBtn" data-i18n="toolbar.swap">⇄ Swap</button>
+        <button class="btn" id="clearBtn" style="margin-left: 6px;" title="Reset Workspace" data-i18n="toolbar.clear">🗑️ Clear</button>
+        <div class="divider"></div>
+        
+        <div>
+            <span class="toolbar-label" data-i18n="toolbar.view">View</span>
+            <select id="fontSelect">
+                <option value="'Inter', -apple-system, sans-serif">Inter (UI)</option>
+                <option value="charter, Georgia, serif">Charter (Serif)</option>
+                <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+            </select>
+            <select id="fontSizeSelect" style="width: 70px;">
+                <option value="14">14px</option>
+                <option value="15" selected>15px</option>
+                <option value="16">16px</option>
+                <option value="18">18px</option>
+            </select>
+        </div>
+        <div class="divider"></div>
+        <button class="btn" id="aboutBtn" title="About & Help" style="padding: 0 10px; font-weight:bold;">?</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        <!-- Left Panel: Input -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title" data-i18n="input.title">INPUT</span>
+                <div class="panel-tools">
+                    <span class="char-counter" id="inputCounter">0 chars</span>
+                </div>
+            </div>
+            
+            <!-- X-Ray System Prompt Panel -->
+            <div class="sys-prompt-bar" id="sysBar">
+                <div class="sys-header" id="sysHeader">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="sysArrow" style="font-size:10px; transition:0.2s;">▶</span>
+                        <span style="font-weight: 600; font-size: 11px;" data-i18n="input.sys_prompt">System Prompt</span>
+                        
+                        <!-- ВАЖНО: Вот контейнер с двумя бейджами -->
+                        <div style="display:flex; gap: 4px;">
+                            <span id="sysNameBadge" class="sys-badge">...</span>
+                            <span id="sysStatus" class="sys-badge">ORIGINAL</span>
+                        </div>
+                    </div>
+                    <button class="btn-sys-reset" id="sysResetBtn" title="Revert to original file content" data-i18n="input.revert">↺ Revert</button>
+                </div>
+                <div class="sys-body" id="sysBody">
+                    <textarea id="sysEditor" spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <!-- Co-Writer Configuration Panel -->
+            <div class="cowriter-bar" id="coWriterBar" style="display: none;">
+                <div class="cowriter-header" id="coHeader" style="cursor: pointer; user-select: none;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                        <span id="coArrow" style="font-size: 10px; transition: 0.2s; transform: rotate(90deg);">▶</span>
+                        <span style="font-size: 14px;">✨</span>
+                        <!-- Выбор пресета -->
+                        <select id="coPresetSelect" class="cowriter-select"></select>
+                    </div>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="btn-icon-sm" id="coSaveBtn" title="Save current text as preset">💾</button>
+                        <button class="btn-icon-sm" id="coLockBtn" title="Toggle Lock">🔓</button> <!-- Новая кнопка -->
+                        <button class="btn-icon-sm" id="coDelBtn" title="Delete preset">✕</button>
+                    </div>
+                </div>
+                <textarea id="coWriterEditor" placeholder="How should AI continue the text?"></textarea>
+            </div>
+
+            <div class="editor-container">
+                <textarea id="inputText" placeholder="Paste your text here..." data-i18n="input.placeholder"></textarea>
+            </div>
+        </div>
+
+        <!-- Right Panel: Output -->
+        <div class="panel">
+        <div class="panel-header">
+            <span class="panel-title" id="outputTitle" data-i18n="output.title">OUTPUT</span>
+            <div class="panel-tools">
+                <span class="char-counter" id="outputCounter">0 chars</span>
+                    
+                </div>
+            </div>
+            <!-- Output Actions Bar (Symmetry Fix) -->
+            <div class="sys-prompt-bar">
+                <div class="sys-header" style="cursor: default; justify-content: flex-end;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        
+                        <button class="btn-sys-reset visible" id="copyBtn" title="Copy Output">
+                        <span data-i18n="output.copy">📋 Copy Text</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- FIX: Заменили жесткий цвет на переменную темы -->
+        <div class="editor-container" style="background: var(--bg-input);">
+            <textarea id="outputText" style="display: none;"></textarea>
+            <div class="rich-output" id="richOutput">
+                    <div style="color: var(--text-muted); display: flex; height: 100%; align-items: center; justify-content: center; flex-direction: column; gap: 10px;">
+                        <div style="font-size: 40px; opacity: 0.2;">⌨️</div>
+                        <div>Ready to process</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+        <div style="display: flex; align-items: center;">
+            <span class="status-indicator"></span>
+            <span id="statusText">Ready</span>
+            
+            <!-- Time Widget (Hidden by default) -->
+            <span id="timeWidget" style="display: none; margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--border);">
+                <span class="stats-label" data-i18n="status.time">Time:</span>
+                <span id="statusTime" style="color: var(--text-main); font-weight: 500;"></span>
+            </span>
+            
+            <!-- Active Model Indicator -->
+            <span style="margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--border);">
+                <span class="stats-label" data-i18n="status.model">Model:</span>
+                <span id="statsCurrentModel" style="color: var(--accent); font-weight: 600;">...</span>
+            </span>
+
+            <span style="margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--border); opacity: 0.8;">
+                <span class="stats-label" data-i18n="status.def_model">Def. Model:</span>
+                <span id="statsDefault" style="color: var(--text-main); font-weight: 600;">...</span>
+            </span>
+            <span style="margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--border); opacity: 0.8;">
+                <span class="stats-label" data-i18n="status.def_prompt">Def. Prompt:</span>
+                <span id="statsDefaultPrompt" style="color: var(--text-main); font-weight: 600;">...</span>
+            </span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span class="stats-item"><span class="stats-label" data-i18n="status.tokens">Tokens:</span><span id="statsTokens">0</span></span>
+            <span class="stats-item"><span class="stats-label" id="costLabel" data-i18n="status.est_cost">Est. Cost:</span><span id="statsCost">$0.000</span></span>
+            <span class="stats-item" id="balanceWidget" style="cursor: pointer; position: relative; overflow: hidden; vertical-align: bottom; height: 16px; display: inline-flex; align-items: center;">
+    <!-- min-width: 58px держит ширину слова "Balance:", чтобы "Spent:" не схлопывал блок -->
+    <span class="stats-label" id="balanceLabel" style="min-width: 58px; display: inline-block;" data-i18n="status.balance">Balance:</span>
+    <div class="balance-slider" id="balanceSlider">
+        <div id="statsBalance" style="color: #7ee787;">...</div>
+        <div id="statsSession" style="color: #d2a8ff;">$0.000</div>
+    </div>
+</span>
+            
+        </div>
+    </div>
+
+    <!-- Prompts Modal -->
+    <div class="modal-overlay" id="promptModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Prompt Library</span>
+                <button class="btn btn-icon-only" id="closeModalBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="prompt-sidebar" id="promptList"></div>
+                <div class="prompt-preview-area">
+                    <textarea id="promptPreview" readonly class="prompt-text-display"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Models Manager Modal -->
+    <div class="modal-overlay" id="modelsModal">
+        <div class="modal" style="width: 600px; height: auto; max-height: 80vh;">
+            <div class="modal-header">
+                <span class="modal-title" data-i18n="models.title">Model Manager (OpenRouter)</span>
+                <button class="btn btn-icon-only" id="closeModelsBtn">✕</button>
+            </div>
+            <div class="modal-body" style="flex-direction: column; padding: 16px; gap: 16px; overflow-y: auto;">
+                <div style="display: flex; gap: 8px; align-items: flex-end; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; border: 1px solid var(--border);">
+                    <div style="flex: 1;">
+                        <div class="toolbar-label" style="margin-bottom: 4px;" data-i18n="models.id_label">Model ID (OpenRouter)</div>
+                        <input type="text" id="newModelId" placeholder="e.g. google/gemini-pro" style="width: 100%; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); padding: 6px; border-radius: 4px; outline: none;">
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="toolbar-label" style="margin-bottom: 4px;" data-i18n="models.name_label">Display Name</div>
+                        <input type="text" id="newModelName" placeholder="e.g. Gemini Pro" style="width: 100%; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); padding: 6px; border-radius: 4px; outline: none;">
+                    </div>
+                    <button class="btn btn-primary" id="addModelBtn" style="height: 30px;" data-i18n="models.add_btn">Add</button>
+                </div>
+                <div class="toolbar-label" data-i18n="models.saved_label">Saved Models</div>
+                <div id="modelsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                <div style="margin-top: 8px; text-align: right;">
+                    <button class="btn" id="resetModelsBtn" style="font-size: 11px; opacity: 0.7;" data-i18n="models.reset_btn">Reset to Defaults</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="apiKeyModal">
+        <div class="modal" style="width: 500px; height: auto;">
+            <div class="modal-header">
+                <span class="modal-title" data-i18n="key.title">OpenRouter API Key Configuration</span>
+                <button class="btn btn-icon-only" id="closeKeyModalBtn">✕</button>
+            </div>
+            <div class="modal-body" style="flex-direction: column; padding: 20px;">
+                <div id="keyStatusMsg" class="key-status-msg" style="display:none;"></div>
+                <div class="toolbar-label" style="margin-bottom: 6px;" data-i18n="key.label">API Key</div>
+                <div class="key-input-group">
+                    <div class="key-input-wrapper">
+                        <input type="password" id="apiKeyInput" placeholder="sk-or-v1-...">
+                        <button class="input-icon-btn btn-copy-key" id="copyKeyBtn" title="Copy to Clipboard">📋</button>
+                        <button class="input-icon-btn btn-eye" id="toggleKeyVisBtn" title="Show/Hide">👁️</button>
+                    </div>
+                    <button class="btn btn-primary" id="saveKeyBtn" data-i18n="key.save">Save</button>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 12px;">
+                    <div style="margin-bottom: 4px; color: var(--success);">🔒 <strong data-i18n="key.secure_title">Secure Storage Active</strong></div>
+                    <span data-i18n="key.secure_desc">Key is encrypted locally...</span>
+                </div>
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: right;">
+                    <button class="btn" id="deleteKeyBtn" style="color: #da3633; border-color: rgba(218, 54, 51, 0.3);" data-i18n="key.remove">Remove Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal-overlay" id="aboutModal">
+        <div class="modal" style="width: 600px; height: auto; max-height: 80vh;">
+            <div class="modal-header">
+                <span class="modal-title" data-i18n="about.title">About</span>
+                <button class="btn btn-icon-only" id="closeAboutBtn">✕</button>
+            </div>
+            <div class="modal-body" style="flex-direction: column; padding: 24px; overflow-y: auto;">
+                
+                <div class="about-section">
+                    <h3 style="display: flex; align-items: center;">
+                        AI Text Enhancer 
+                        <span class="app-logo-pro" style="font-size: 18px; margin-left: 5px;">Pro</span> 
+                        <span style="font-size:12px; opacity:0.5; font-weight:400; margin-left: 8px; color: var(--text-muted);">v2.0</span>
+                    </h3>
+                    <p data-i18n="about.desc">Professional tool for text processing and code refactoring powered by LLMs via OpenRouter.</p>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-item">
+                        <div class="about-label" data-i18n="about.lbl_shortcuts">Shortcuts</div>
+                        <div class="shortcut-row">
+                            <span class="shortcut-desc" data-i18n="about.sc_run">Run Processor</span>
+                            <div class="keys-group">
+                                <code class="key-badge">Ctrl</code>
+                                <span class="key-plus">+</span>
+                                <code class="key-badge">Enter</code>
+                            </div>
+                        </div>
+                         <div class="shortcut-row">
+                            <span class="shortcut-desc" data-i18n="about.sc_swap">Swap Input/Output</span>
+                            <div class="keys-group">
+                                <code class="key-badge">Alt</code>
+                                <span class="key-plus">+</span>
+                                <code class="key-badge">S</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-item">
+                        <div class="about-label" data-i18n="about.lbl_features">Features</div>
+                        <ul class="about-list">
+                            <li>🔒 <strong data-i18n="about.ft_secure">Secure:</strong> <span data-i18n="about.ft_secure_desc">API Key encrypted locally (AES-128).</span></li>
+                            <li>⚡ <strong data-i18n="about.ft_stream">Streaming:</strong> <span data-i18n="about.ft_stream_desc">Real-time token processing.</span></li>
+                            <li>🔍 <strong data-i18n="about.ft_xray">X-Ray:</strong> <span data-i18n="about.ft_xray_desc">View & Edit system prompts on the fly.</span></li>
+                            <li>⚖️ <strong data-i18n="about.ft_diff">Diff View:</strong> <span data-i18n="about.ft_diff_desc">Compare Original vs Result.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="about-footer">
+                    <span data-i18n="about.footer">Designed for fast, distraction-free text refinement.</span><br>
+                    <a href="https://github.com/AlexDustin/AI-Text-Enhancer-Pro/blob/main/README.md" target="_blank" style="color: var(--accent); text-decoration: none;">Documentation</a> • <a href="https://github.com/AlexDustin/AI-Text-Enhancer-Pro" target="_blank" style="color: var(--accent); text-decoration: none;">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- Settings Modal (New Design) -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal" style="width: 550px; height: auto;">
+            <div class="modal-header">
+                <span class="modal-title" data-i18n="settings.title">Global Settings</span>
+                <button class="btn btn-icon-only" id="closeSettingsBtn">✕</button>
+            </div>
+            <div class="modal-body" style="flex-direction: column; padding: 24px;">
+                
+                <!-- Language Section -->
+                <div class="settings-group">
+                    <span class="settings-label" data-i18n="settings.lang_label">Interface Language</span>
+                    <div class="currency-grid">
+                        <label class="currency-card" id="cardLangEN">
+                            <input type="radio" name="langGroup" value="en">
+                            <span class="currency-icon">🇺🇸</span>
+                            <div class="currency-info">
+                                <span class="currency-name">English</span>
+                                <span class="currency-desc">Default</span>
+                            </div>
+                        </label>
+                        <label class="currency-card" id="cardLangRU">
+                            <input type="radio" name="langGroup" value="ru">
+                            <span class="currency-icon">🇷🇺</span>
+                            <div class="currency-info">
+                                <span class="currency-name">Русский</span>
+                                <span class="currency-desc">Russian</span>
+                            </div>
+                        </label>
+                        <label class="currency-card" id="cardLangDE">
+                            <input type="radio" name="langGroup" value="de">
+                            <span class="currency-icon">🇩🇪</span>
+                            <div class="currency-info">
+                                <span class="currency-name">Deutsch</span>
+                                <span class="currency-desc">German</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Theme Section -->
+                <div class="settings-group">
+                    <span class="settings-label" data-i18n="settings.theme_label">Interface Theme</span>
+                    <div class="currency-grid" style="grid-template-columns: 1fr 1fr;">
+                        <label class="currency-card" id="cardThemeDark">
+                            <input type="radio" name="themeGroup" value="dark">
+                            <span class="currency-icon">🌑</span>
+                            <div class="currency-info">
+                                <span class="currency-name">Dark</span>
+                                <span class="currency-desc">Default</span>
+                            </div>
+                        </label>
+                        <label class="currency-card" id="cardThemeLight">
+                            <input type="radio" name="themeGroup" value="light">
+                            <span class="currency-icon">☀️</span>
+                            <div class="currency-info">
+                                <span class="currency-name">Light</span>
+                                <span class="currency-desc">Clean</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Currency Section -->
+                <!-- FIX: Убрали нижнюю границу через inline-стиль -->
+                <div class="settings-group" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
+                    <span class="settings-label" data-i18n="settings.curr_label">Display Currency</span>
+                    <div class="currency-grid">
+                        <!-- USD Option -->
+                        <label class="currency-card" id="cardUSD">
+                            <input type="radio" name="currencyGroup" value="USD">
+                            <span class="currency-icon">🇺🇸</span>
+                            <div class="currency-info">
+                                <span class="currency-name">USD ($)</span>
+                                <span class="currency-desc">Default</span>
+                            </div>
+                        </label>
+
+                        <!-- EUR Option -->
+                        <label class="currency-card" id="cardEUR">
+                            <input type="radio" name="currencyGroup" value="EUR">
+                            <span class="currency-icon">🇪🇺</span>
+                            <div class="currency-info">
+                                <span class="currency-name">EUR (€)</span>
+                                <span class="currency-desc">Converted</span>
+                            </div>
+                        </label>
+                        
+                        <!-- RUB Option -->
+                        <label class="currency-card" id="cardRUB">
+                            <input type="radio" name="currencyGroup" value="RUB">
+                            <span class="currency-icon">🇷🇺</span>
+                            <div class="currency-info">
+                                <span class="currency-name">RUB (₽)</span>
+                                <span class="currency-desc">Converted</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Common Rate Fetcher Header -->
+                    <div id="rateHeader" style="display:none; justify-content: space-between; margin-top: 12px; margin-bottom: 6px; align-items: center;">
+                        <span style="font-size: 12px; font-weight: 500;">Exchange Rate</span>
+                        <button id="fetchCbrBtn" class="btn-group-item" style="border: 1px solid var(--border); font-size: 10px; padding: 1px 6px;">↻ Get CBR</button>
+                    </div>
+
+                    <!-- RUB Rate Input -->
+                    <div class="rate-input-container" id="rubRateBlock" style="display:none; margin-top: 0;">
+                        <div style="position: relative;">
+                            <input type="number" id="rubRateInput" class="styled-input" placeholder="e.g. 90.0" step="0.01">
+                            <span style="position: absolute; right: 10px; top: 8px; font-size: 12px; color: var(--text-muted);">₽</span>
+                        </div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px; text-align: right;">1 USD = ? RUB</div>
+                    </div>
+
+                    <!-- EUR Rate Input -->
+                    <div class="rate-input-container" id="eurRateBlock" style="display:none; margin-top: 0;">
+                        <div style="position: relative;">
+                            <input type="number" id="eurRateInput" class="styled-input" placeholder="e.g. 0.92" step="0.001">
+                            <span style="position: absolute; right: 10px; top: 8px; font-size: 12px; color: var(--text-muted);">€</span>
+                        </div>
+                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px; text-align: right;">1 USD = ? EUR</div>
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px;">
+                    <button class="btn" id="cancelSettingsBtn" style="border: none;" data-i18n="settings.cancel">Cancel</button>
+                    <button class="btn btn-primary" id="saveSettingsBtn" style="padding: 0 20px;" data-i18n="settings.save">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Custom Logic -->
+    <script src="static/main.js"></script>
+</body>
+</html>

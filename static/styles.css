@@ -1,0 +1,1438 @@
+:root {
+    --bg-app: #0d1117;
+    --bg-panel: #161b22;
+    --bg-input: #0d1117;
+    --border: #30363d;
+    --border-hover: #8b949e;
+    --accent: #2f81f7;
+    --accent-hover: #58a6ff;
+    --text-main: #c9d1d9;
+    --text-muted: #8b949e;
+    --success: #238636;
+    --del-bg: rgba(218, 54, 51, 0.2);
+    --add-bg: rgba(35, 134, 54, 0.2);
+    --header-height: 50px;
+}
+
+
+/* --- Light Theme Overrides (High Contrast Fix) --- */
+[data-theme="light"] {
+    --bg-app: #f0f2f5;       /* СЕРЫЙ ФОН: Создает ощущение "поверхности стола" */
+    --bg-panel: #ffffff;     /* БЕЛЫЕ ПАНЕЛИ: Эффект "листа бумаги" (фокус внимания) */
+    --bg-input: #ffffff;
+    --border: #d8dee4;       /* Мягкие, но видимые границы */
+    --border-hover: #0969da; /* Синий бордер при наведении (активный элемент) */
+    --accent: #0969da;
+    --accent-hover: #1877f2;
+    --text-main: #1f2328;    /* Почти черный для основного текста (лучше читаемость) */
+    --text-muted: #656d76;   /* Насыщенный серый для второстепенного */
+    --success: #1a7f37;
+    --del-bg: #ffebe9;       /* Пастельный красный (diff) */
+    --add-bg: #dafbe1;       /* Пастельный зеленый (diff) */
+}
+
+/* Специфические фиксы для Light Mode */
+[data-theme="light"] .app-logo svg { fill: var(--accent); }
+[data-theme="light"] textarea { color: var(--text-main); }
+
+/* Заголовки и текст темные */
+/* FIX: Добавили сам .rich-output, чтобы обычный текст тоже стал темным */
+[data-theme="light"] .rich-output { color: var(--text-main); }
+
+[data-theme="light"] .rich-output h1, 
+[data-theme="light"] .rich-output h2, 
+[data-theme="light"] .rich-output h3,
+[data-theme="light"] .rich-output strong { color: var(--text-main); }
+
+
+
+/* --- СВЕТЛЫЙ КОД (GitHub Light Style) --- */
+/* Полное решение проблемы контраста: код становится светлым */
+
+/* 1. Сам блок (Светло-серый, "мягкий" фон) */
+[data-theme="light"] .rich-output pre { 
+    background: #f6f8fa; 
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    box-shadow: none; /* Убираем тяжелые тени, оставляем плоский чистый стиль */
+}
+
+/* 2. Шапка блока */
+[data-theme="light"] .code-header { 
+    background: #f3f4f6; 
+    color: #57606a; 
+    border-bottom: 1px solid #d0d7de;
+    border-radius: 7px 7px 0 0;
+}
+
+/* FIX: Кнопка копирования кода (делаем видимой на светлом) */
+[data-theme="light"] .code-copy-btn {
+    color: #57606a; /* Темно-серый */
+}
+[data-theme="light"] .code-copy-btn:hover {
+    color: #1f2328; /* Черный при наведении */
+    background: rgba(0,0,0,0.05); /* Легкая подложка */
+    border-radius: 4px;
+}
+
+/* 3. Основной текст кода (Темно-серый) */
+[data-theme="light"] .rich-output pre code { 
+    color: #1f2328;
+}
+
+/* 4. Инлайн код (в тексте) */
+[data-theme="light"] .rich-output :not(pre) > code { 
+    background: rgba(175, 184, 193, 0.2);
+    color: #1f2328;
+    border: 1px solid rgba(175, 184, 193, 0.2);
+}
+
+/* 5. ПЕРЕКРАСКА СИНТАКСИСА (Magic Overrides) */
+/* Мы вручную меняем цвета Atom Dark на цвета GitHub Light для читаемости */
+[data-theme="light"] .hljs-comment,
+[data-theme="light"] .hljs-quote { color: #6e7781; font-style: italic; } /* Серый */
+
+[data-theme="light"] .hljs-keyword,
+[data-theme="light"] .hljs-selector-tag { color: #cf222e; } /* Красный */
+
+[data-theme="light"] .hljs-string,
+[data-theme="light"] .hljs-doctag { color: #0a3069; } /* Темно-синий */
+
+[data-theme="light"] .hljs-title,
+[data-theme="light"] .hljs-section,
+[data-theme="light"] .hljs-selector-id { color: #8250df; font-weight: 600; } /* Фиолетовый */
+
+[data-theme="light"] .hljs-function { color: #8250df; } 
+
+[data-theme="light"] .hljs-variable,
+[data-theme="light"] .hljs-template-variable { color: #953800; } /* Оранжевый */
+
+[data-theme="light"] .hljs-number,
+[data-theme="light"] .hljs-literal { color: #0550ae; } /* Синий */
+/* ------------------------------------------------ */
+
+
+
+
+[data-theme="light"] .btn:hover { background-color: #f3f4f6; }
+[data-theme="light"] .prompt-item:hover { background: #f3f4f6; }
+[data-theme="light"] .prompt-item.active { background: var(--accent); color: white; }
+[data-theme="light"] .sys-prompt-bar { background: #eaeef2; }
+[data-theme="light"] .sys-header:hover { background: #e1e4e8; }
+/* --- FIX: Кнопки "Copy" и "Revert" в светлой теме --- */
+[data-theme="light"] .sys-prompt-bar { 
+    background: #f6f8fa; 
+    border-bottom: 1px solid #d0d7de;
+    /* STYLISH: Тень вниз создает эффект, что панель настроек лежит ПОВЕРХ листа ввода */
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+    position: relative; z-index: 5;
+}
+
+[data-theme="light"] .btn-sys-reset {
+    color: #636c76; /* Серый текст по умолчанию */
+}
+
+/* ГЛАВНОЕ ИСПРАВЛЕНИЕ: Ховер теперь темнит, а не белит */
+[data-theme="light"] .btn-sys-reset:hover { 
+    background: rgba(31, 35, 40, 0.1); /* Легкое затемнение фона */
+    color: #1f2328; /* Текст становится черным */
+}
+
+/* Фикс для стандартных кнопок (чтобы тоже выделялись) */
+[data-theme="light"] .btn:hover {
+    background-color: #eef1f4;
+    border-color: #8c959f;
+}
+
+[data-theme="light"] #sysEditor { background: #f6f8fa; color: #24292f; border-top: 1px solid #d0d7de; }
+
+/* --- УЛУЧШЕННЫЙ СТАТУС БАР (Light) --- */
+[data-theme="light"] .status-bar { 
+    background: #ffffff;             /* Белый фон */
+    border-top: 1px solid #d8dee4;   /* Четкая граница сверху */
+    color: #1f2328; 
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.02); /* Легкая тень вверх для разделения */
+}
+
+
+/* Лейблы (Model, Prompt) делаем спокойными (серыми и средней жирности) */
+[data-theme="light"] .stats-label, 
+[data-theme="light"] .toolbar-label { 
+    color: #656d76; 
+    font-weight: 500; /* Снижаем с 600 до 500, чтобы убрать визуальный шум */
+    opacity: 1 !important;
+}
+
+
+/* Значения (числа, имена) делаем черными */
+[data-theme="light"] .stats-item span:not(.stats-label),
+[data-theme="light"] #statusText { 
+    color: #1f2328; 
+}
+
+/* FIX: Второстепенные данные делаем серыми и ТОНКИМИ (иначе жирный шрифт выглядит черным) */
+[data-theme="light"] #statsDefault,
+[data-theme="light"] #statsDefaultPrompt { 
+    color: #656d76 !important; 
+    font-weight: 400 !important; /* Принудительно убираем жирность */
+}
+
+
+/* Вертикальные разделители - делаем видимыми */
+[data-theme="light"] .status-bar > div > span[style*="border-left"] {
+    border-color: #d0d7de !important;
+    opacity: 1 !important;
+}
+/* Цветовые акценты */
+[data-theme="light"] #statsCurrentModel { color: var(--accent); } /* Синий */
+[data-theme="light"] #statsBalance { color: var(--success) !important; } /* Зеленый (читаемый), а не желтый */
+[data-theme="light"] #statsCost { color: #cf222e; } /* Красный для трат */
+
+/* --- STATUS BAR COLORS FIX (Jewel Tones) --- */
+/* Заменяем бледные/неоновые цвета на глубокие и контрастные */
+
+/* 1. Точка статуса (Status Dot) */
+[data-theme="light"] .status-bar.ready .status-indicator { background: #1a7f37; }      /* Изумрудный (вместо лайма) */
+[data-theme="light"] .status-bar.processing .status-indicator { background: #0969da; } /* Сапфировый */
+[data-theme="light"] .status-bar.error .status-indicator { background: #cf222e; }      /* Рубиновый */
+[data-theme="light"] .status-bar.stopped .status-indicator { background: #9a6700; }    /* Темный Янтарь (вместо невидного желтого) */
+
+/* 2. Баланс (Деньги) */
+/* Важно: перебиваем inline-стили JS (!important), чтобы цвет был четким */
+[data-theme="light"] #statsBalance { 
+    color: #1a7f37 !important; /* Глубокий зеленый */
+    font-weight: 600;
+}
+
+/* --- УЛУЧШЕННЫЙ ТУЛБАР (Light) --- */
+[data-theme="light"] .toolbar {
+    background: #ffffff;             /* Белый фон */
+    border-bottom: 1px solid #d0d7de; /* Четкая граница */
+}
+/* Делаем лейблы (Model, Prompt) почти черными для читаемости */
+[data-theme="light"] .toolbar-label { color: #24292f; }
+
+
+/* FIX: Кнопки теперь белые с легкой тенью (объем) */
+[data-theme="light"] .btn, 
+[data-theme="light"] select,
+[data-theme="light"] .btn-group {
+    background: #ffffff; 
+    border: 1px solid #d0d7de;
+    color: #1f2328;
+    box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04);
+    transition: all 0.2s;
+}
+
+
+/* Ховер эффект для ОБЫЧНЫХ кнопок (исключаем цветные Primary/Stop) */
+[data-theme="light"] .btn:not(.btn-primary):not(.btn-stop):hover,
+[data-theme="light"] select:hover {
+    background: #f3f4f6;
+    border-color: #1f2328;
+}
+
+/* --- RUN BUTTON (Primary) FIX --- */
+/* Делаем её четко синей с объемом, чтобы не сливалась с белым фоном */
+[data-theme="light"] .btn-primary {
+    background: #0969da;
+    color: #ffffff;
+    border: 1px solid rgba(27, 31, 35, 0.15);
+    box-shadow: 0 1px 0 rgba(27, 31, 35, 0.1);
+}
+[data-theme="light"] .btn-primary:hover {
+    background: #0550ae; /* Темно-синий при наведении */
+    border-color: rgba(27, 31, 35, 0.15);
+}
+
+/* --- STOP BUTTON (Processing State) FIX --- */
+/* Четко красная при обработке, без серых рамок */
+[data-theme="light"] .btn-stop {
+    background: #cf222e !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(27, 31, 35, 0.15) !important;
+    box-shadow: 0 1px 0 rgba(27, 31, 35, 0.1);
+}
+
+
+[data-theme="light"] .btn-stop:hover {
+    background: #a40e26 !important; /* Темно-красный при наведении */
+}
+
+/* --- DIFF VIEW FIX (Light) --- */
+/* Делаем текст диффа контрастным (темным), а фон оставляем нежным */
+[data-theme="light"] .diff-del {
+    background-color: #ffebe9; 
+    color: #cf222e; /* Темно-красный (вместо бледного) */
+}
+[data-theme="light"] .diff-add {
+    background-color: #dafbe1;
+    color: #1a7f37; /* Темно-зеленый (вместо бледного) */
+}
+
+
+/* Активная кнопка Preview/Diff - Акцентный синий */
+[data-theme="light"] .btn-group-item.active {
+    background: #0969da; 
+    color: white;
+    font-weight: 500;
+}
+/* Разделители */
+[data-theme="light"] .divider { background: #d0d7de; }
+
+
+
+/* --- CO-WRITER FIXES (Light) --- */
+
+/* 1. КНОПКА CO-WRITER (ACTIVE) */
+[data-theme="light"] #coWriterBtn.active {
+    background: #f3e8ff;         /* Лавандовый фон (четко видно, что нажата) */
+    color: #6d28d9;              /* Темно-фиолетовый текст */
+    border-color: #7c3aed;       /* Четкая граница */
+    font-weight: 600;
+}
+
+/* 2. ПАНЕЛЬ CO-WRITER (Drawer Style) */
+[data-theme="light"] .cowriter-bar {
+    background: #f5f3ff;
+    /* FIX: Заменили жирную (2px) линию на тонкую, едва заметную (1px 30% opacity). 
+       Теперь это мягкий разделитель, а не "бельмо". */
+    border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+    
+    /* Слегка ослабили тень, чтобы переход был еще мягче */
+    box-shadow: 0 4px 12px -4px rgba(124, 58, 237, 0.15);
+    position: relative; z-index: 4;
+}
+
+/* 3. ШАПКА ПАНЕЛИ */
+[data-theme="light"] .cowriter-header {
+    /* FIX: Шапка темнее тела (#ede9fe), чтобы создать объем */
+    background: #ede9fe;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+/* 4. ТЕКСТ И ПОЛЯ */
+[data-theme="light"] #coWriterEditor {
+    color: #1f2328;
+}
+[data-theme="light"] #coWriterEditor::placeholder {
+    color: #8c959f;
+}
+
+/* 5. ЭЛЕМЕНТЫ УПРАВЛЕНИЯ */
+[data-theme="light"] .cowriter-select {
+    background: #ffffff;
+    color: #1f2328;
+    border: 1px solid #d8b9ff;   /* Фиолетовая рамка */
+    box-shadow: 0 1px 0 rgba(130, 80, 223, 0.05); /* Легкий объем */
+}
+
+[data-theme="light"] .btn-icon-sm {
+    color: #8250df;
+    border: 1px solid transparent;
+}
+[data-theme="light"] .btn-icon-sm:hover {
+    background: #ffffff;
+    border-color: #d8b9ff;
+    color: #6e40c9;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Кнопки становятся "карточками" при наведении */
+}
+
+[data-theme="light"] .cowriter-select option { background: white; color: #1f2328; }
+
+
+
+/* --- SCROLLBAR FIX (Light) --- */
+/* Делаем скроллбар светлым, чтобы не было черной полосы справа */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #d0d7de; 
+    border-color: #ffffff; /* Белая обводка создает отступ */
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #aeb6be; 
+}
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* --- EMPTY STATE FIX (Light) --- */
+[data-theme="light"] .rich-output div[style*="opacity: 0.2"] {
+    opacity: 0.5 !important; 
+    color: #8c959f;
+    filter: none;
+}
+
+
+/* Делаем текст "Ready to process" темнее */
+[data-theme="light"] .rich-output > div {
+    color: #24292f !important; /* Почти черный цвет вместо серого */
+}
+
+
+/* --- ABOUT MODAL & KEYS FIX (Light) --- */
+/* 1. Основа окна */
+[data-theme="light"] .modal {
+    background: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #d0d7de;
+}
+
+/* 2. Шапка окна (Header) - делаем серым, чтобы отделить от контента */
+[data-theme="light"] .modal-header {
+    background: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+    border-radius: 12px 12px 0 0; /* Скругляем только верхние углы */
+}
+
+/* 3. Блок "О программе" - выделяем в отдельную карточку */
+[data-theme="light"] .about-section {
+    background: #f6f8fa;       /* Легкий серый фон */
+    border: 1px solid #d0d7de; /* Рамка */
+    border-radius: 8px;        /* Скругление */
+    padding: 16px;             /* Внутренний отступ */
+}
+
+
+/* Исправляем "невидимые" клавиши шорткатов */
+[data-theme="light"] .key-badge {
+    background: #f6f8fa;         /* Светло-серый кейкап */
+    border: 1px solid #d0d7de;
+    border-bottom: 2px solid #c0c6cd; /* Эффект нажатия (объем) */
+    color: #1f2328;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    font-weight: 600;
+    text-shadow: none;
+}
+
+/* Плюсик между клавишами */
+[data-theme="light"] .key-plus {
+    color: #636c76;
+    opacity: 1;
+}
+
+/* Ховер эффект для списка шорткатов */
+[data-theme="light"] .shortcut-row:hover {
+    background: #f3f4f6;
+}
+
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+/* --- Toolbar --- */
+.toolbar {
+    height: var(--header-height);
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+/* --- ЛОГОТИП --- */
+.app-logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    gap: 8px;
+    flex: 1; 
+    user-select: none;
+    min-width: 150px;
+    padding-right: 24px; 
+}
+
+.app-logo svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--accent);
+}
+
+.app-logo-text {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.app-logo-pro {
+    background: linear-gradient(135deg, #2f81f7, #d2a8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    font-style: italic;
+    margin-left: 2px;
+    font-size: 13px;
+    padding-right: 4px; 
+}
+
+@media (max-width: 1100px) {
+    .app-logo { display: none; }
+}
+
+.toolbar-label {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-right: 6px;
+}
+
+select, button { font-family: inherit; font-size: 13px; outline: none; }
+
+select {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    height: 28px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+select:hover { border-color: var(--border-hover); }
+select:focus { border-color: var(--accent); }
+
+.btn {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    border-radius: 6px;
+    padding: 0 12px;
+    height: 28px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+.btn:hover { background-color: #21262d; border-color: var(--border-hover); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+    background-color: #1f6feb;
+    color: white;
+    border: 1px solid rgba(240, 246, 252, 0.1);
+}
+.btn-primary:hover { background-color: #388bfd; border-color: rgba(240, 246, 252, 0.1); }
+
+.btn-stop {
+    background-color: #da3633 !important; /* Принудительный красный */
+    color: white;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.btn-stop:hover { background-color: #b82c29 !important; }
+
+/* New Copy Button Style */
+.btn-copy-action {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 0 12px;
+    height: 26px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+.btn-copy-action:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+    background-color: rgba(255,255,255,0.05);
+}
+.btn-copy-action.success {
+    background-color: rgba(35, 134, 54, 0.2);
+    border-color: #238636;
+    color: #3fb950;
+}
+
+.btn-group {
+    display: flex;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px;
+}
+.btn-group-item {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 2px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-group-item.active {
+    background: #30363d;
+    color: white;
+    font-weight: 600;
+}
+
+.spacer { flex: 1; }
+.divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+/* API Key Modal Styles */
+.key-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    position: relative;
+}
+.key-input-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.key-input-wrapper input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 8px 70px 8px 12px; 
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.key-input-wrapper input:focus { border-color: var(--accent); }
+.key-input-wrapper input.invalid { border-color: #da3633; color: #da3633; }
+
+/* Общий класс для кнопок внутри инпута */
+.input-icon-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    transition: color 0.2s;
+}
+
+.input-icon-btn:hover { color: var(--text-main); }
+
+.btn-eye { right: 8px; }
+.btn-copy-key { right: 38px; }
+
+.key-status-msg {
+    font-size: 12px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+}
+.key-status-msg.warning { border-color: #d29922; color: #d29922; background: rgba(210, 153, 34, 0.1); }
+.key-status-msg.valid { border-color: #238636; color: #3fb950; background: rgba(35, 134, 54, 0.1); }
+
+@keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(218, 54, 51, 0); } 100% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0); } }
+.btn.needs-attention {
+    border-color: #da3633;
+    color: #da3633;
+    animation: pulse-red 2s infinite;
+}
+
+/* --- Main Layout --- */
+.main-container {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    padding: 8px;
+    gap: 8px;
+}
+
+.panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    overflow: hidden; /* <--- Обрезаем квадратные внутренности под скругленные углы */
+}
+
+.panel-header {
+    height: 42px; 
+    padding: 0 16px; 
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px 8px 0 0;
+}
+
+.panel-title { font-weight: 600; color: var(--text-main); font-size: 13px; letter-spacing: 0.02em; }
+.panel-tools { display: flex; gap: 12px; align-items: center; }
+
+.char-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* --- Editors --- */
+.editor-container { flex: 1; position: relative; overflow: hidden; }
+
+textarea {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: var(--text-main);
+    border: none;
+    resize: none;
+    padding: 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    outline: none;
+    font-family: inherit;
+}
+textarea::placeholder { color: #484f58; }
+
+/* --- Rich Output --- */
+.rich-output {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+    font-size: 15px;
+    line-height: 1.7;
+    word-wrap: break-word;
+    color: #e6edf3;
+}
+
+/* Diff Styling */
+.diff-view { white-space: pre-wrap; font-family: inherit; }
+.diff-del { background-color: var(--del-bg); text-decoration: line-through; color: #ffa198; padding: 2px 0; }
+.diff-add { background-color: var(--add-bg); color: #7ee787; padding: 2px 0; }
+
+/* Markdown Elements */
+.rich-output h1, .rich-output h2, .rich-output h3 {
+    color: white; margin-top: 24px; margin-bottom: 12px; font-weight: 600; line-height: 1.25;
+}
+.rich-output h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+.rich-output h2 { font-size: 1.5em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+.rich-output h3 { font-size: 1.25em; }
+.rich-output p { margin-bottom: 16px; }
+.rich-output ul, .rich-output ol { padding-left: 2em; margin-bottom: 16px; }
+.rich-output li { margin-bottom: 4px; }
+.rich-output blockquote {
+    border-left: 4px solid var(--accent); color: var(--text-muted);
+    padding: 8px 16px; margin: 16px 0; background: rgba(47, 129, 247, 0.1);
+    border-radius: 0 4px 4px 0;
+}
+.rich-output strong { color: white; font-weight: 600; }
+.rich-output a { color: var(--accent); text-decoration: none; }
+.rich-output a:hover { text-decoration: underline; }
+
+/* Code Blocks */
+.rich-output pre {
+    position: relative; margin: 16px 0; background: #0d1117;
+    border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+}
+.code-header {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #1f242c; padding: 6px 12px; border-bottom: 1px solid var(--border);
+    font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-muted); user-select: none;
+}
+.code-copy-btn {
+    background: transparent; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px;
+}
+.code-copy-btn:hover { color: white; }
+.code-copy-btn.copied { color: var(--success); }
+
+.rich-output pre code {
+    display: block; padding: 16px; overflow-x: auto; white-space: pre;
+    tab-size: 4; -moz-tab-size: 4; font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    font-size: 13.5px; line-height: 1.6; background: transparent;
+    -webkit-font-smoothing: antialiased; font-variant-ligatures: normal; color: #e6edf3;
+}
+.rich-output :not(pre) > code {
+    background: rgba(110, 118, 129, 0.2); padding: 0.2em 0.4em;
+    border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+    font-size: 85%; color: var(--text-main);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 5px; border: 2px solid var(--bg-panel); }
+::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+.status-bar {
+    background: var(--bg-panel); 
+    border-top: 1px solid var(--border);
+    padding: 10px 20px; 
+    font-size: 13px; 
+    color: var(--text-muted);
+    font-weight: 500; 
+    display: flex; 
+    justify-content: space-between; 
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.status-indicator {
+    display: inline-block; 
+    width: 10px; 
+    height: 10px;
+    border-radius: 50%; 
+    margin-right: 8px; 
+    background: var(--text-muted);
+}
+.status-bar.processing .status-indicator { background: var(--accent); animation: pulse 1s infinite; }
+.status-bar.error .status-indicator { background: #da3633; }
+.status-bar.stopped .status-indicator { background: #e3b341; } /* Yellow for Stop */
+.status-bar.ready .status-indicator { background: var(--success); }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+/* Убрали JetBrains Mono, вернули Inter. Добавили tabular-nums (чтобы цифры стояли ровно) */
+.stats-item { 
+    margin-left: 24px; 
+    font-family: 'Inter', -apple-system, sans-serif; 
+    font-feature-settings: "tnum"; 
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-label { 
+    opacity: 0.7; 
+    margin-right: 6px; 
+    font-size: 12px; /* Чуть меньше, чтобы акцент был на цифрах */
+}
+
+/* Уменьшили жирность с 600 до 500, добавили цвета */
+.stats-item span:not(.stats-label) { 
+    color: #e6edf3; /* Более яркий белый */
+    font-weight: 500; 
+    letter-spacing: 0.01em; 
+}
+
+/* FIX: Выделяем "Цену" красным в темной теме (для единообразия со светлой) */
+#statsCost {
+    color: #ff7b72; /* Мягкий красный (GitHub Red) для обозначения расходов */
+}
+
+/* Modal */
+.modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px); z-index: 100; align-items: center; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px;
+    width: 1200px; height: 80vh; max-width: 95%; max-height: 95vh;
+    display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+/* FIX: Шапка окна (Dark) - добавляем фон и скругление */
+.modal-header { 
+    padding: 16px; 
+    border-bottom: 1px solid var(--border); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background: rgba(255,255,255,0.03); /* Едва заметный светлый фон */
+    border-radius: 12px 12px 0 0;
+}
+.modal-title { font-weight: 600; font-size: 16px; }
+.modal-body { flex: 1; overflow: hidden; display: flex; }
+.prompt-sidebar { width: 250px; border-right: 1px solid var(--border); overflow-y: auto; padding: 8px; }
+.prompt-preview-area { flex: 1; padding: 0; display: flex; flex-direction: column; }
+.prompt-item {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px; 
+    cursor: pointer;
+    margin-bottom: 4px; 
+    transition: background 0.2s;
+}
+.prompt-item:hover { background: #21262d; }
+.prompt-item.active { background: var(--accent); color: white; }
+
+.btn-fav-prompt {
+    background: transparent; 
+    border: none; 
+    color: var(--text-muted);
+    cursor: pointer; 
+    padding: 4px; 
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.5;
+    transition: all 0.2s;
+}
+.prompt-item:hover .btn-fav-prompt { opacity: 1; } 
+.btn-fav-prompt:hover { transform: scale(1.2); color: white; }
+
+.btn-fav-prompt.is-default { 
+    color: #e3b341; 
+    opacity: 1; 
+    text-shadow: 0 0 5px rgba(227, 179, 65, 0.5);
+}
+.prompt-item.active .btn-fav-prompt { color: rgba(255,255,255,0.7); }
+.prompt-item.active .btn-fav-prompt.is-default { color: #ffd700; }
+
+ /* Styles for Model Manager List */
+.model-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+.model-info { display: flex; flex-direction: column; gap: 2px; }
+.model-name { font-weight: 600; font-size: 13px; color: var(--text-main); }
+.model-id { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.btn-del-model {
+    background: transparent; border: none; color: #da3633;
+    cursor: pointer; padding: 4px; opacity: 0.6; transition: opacity 0.2s;
+}
+.btn-fav-model {
+    background: transparent; 
+    border: none; 
+    color: var(--border-hover); 
+    cursor: pointer; 
+    padding: 4px; 
+    font-size: 16px; 
+    line-height: 1;
+    transition: all 0.2s;
+    margin-right: 8px;
+}
+.btn-fav-model:hover { color: var(--text-main); transform: scale(1.1); }
+
+.btn-fav-model.active { color: #e3b341; text-shadow: 0 0 8px rgba(227, 179, 65, 0.3); }
+.btn-del-model:hover { opacity: 1; }
+
+/* --- X-Ray System Prompt --- */
+.sys-prompt-bar {
+    border-bottom: 1px solid var(--border);
+    background: #1c2128; /* Чуть светлее фона панели, чтобы выделяться */
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* Не сжиматься */
+}
+
+.sys-header {
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.2s;
+}
+.sys-header:hover { background: #252b36; color: var(--text-main); }
+
+/* Единый стиль для "серых квадратиков" */
+.sys-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.1); /* Серый фон */
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+}
+
+/* Стили конкретно для статуса изменения */
+.sys-badge.status-modified {
+    background: rgba(210, 153, 34, 0.2);
+    color: #d29922;
+    border: 1px solid rgba(210, 153, 34, 0.3);
+}
+
+.btn-sys-reset {
+    background: transparent; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 12px; padding: 2px 6px; border-radius: 4px;
+    opacity: 0; pointer-events: none; transition: all 0.2s;
+}
+.btn-sys-reset.active,
+.btn-sys-reset.visible { opacity: 1; pointer-events: auto; }
+.btn-sys-reset:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
+
+.sys-body {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.2s ease-out;
+}
+.sys-body.open {
+    height: 180px; /* Высота развернутого редактора */
+    border-top: 1px solid var(--border);
+}
+
+#sysEditor {
+    width: 100%;
+    height: 100%;
+    background: #12161c; /* Очень темный фон для кода */
+    color: #a5d6ff; /* Цвет кода */
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 8px 12px;
+    border: none;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+}
+#sysArrow.rotated { transform: rotate(90deg); }
+
+/* --- About Modal Styles --- */
+/* FIX: Превращаем секцию в карточку (Dark) */
+.about-section { 
+    background: rgba(255,255,255,0.03); /* Выделяем блок */
+    border: 1px solid var(--border);     /* Добавляем рамку */
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+.about-section h3 { color: var(--text-main); font-size: 18px; margin-bottom: 8px; }
+.about-section p { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+
+.about-grid { display: flex; flex-direction: column; gap: 20px; }
+.about-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
+
+.shortcut-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 8px 12px; /* Чуть больше воздуха внутри */
+    margin: 0 -12px;   /* Компенсация отступа, чтобы фон был шире текста */
+    border-radius: 6px;
+    font-size: 13px; 
+    color: var(--text-main); 
+    transition: background 0.2s ease;
+    /* Убрали border-bottom для чистоты */
+}
+
+.shortcut-row:hover {
+    background: rgba(255,255,255,0.04); /* Легкая подсветка при наведении */
+}
+
+.keys-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.9;
+    /* FIX: Создаем жесткую колонку шириной 120px для шорткатов */
+    min-width: 120px; 
+    justify-content: flex-start; /* Теперь Ctrl и Alt всегда стартуют с одной линии */
+}
+
+.key-plus {
+    color: var(--text-muted);
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.key-badge { 
+    background: rgba(255,255,255,0.06); 
+    border: 1px solid var(--border); 
+    border-radius: 4px; 
+    padding: 2px 6px; 
+    min-width: 32px;
+    text-align: center;
+    font-family: 'Inter', sans-serif; 
+    font-weight: 500;
+    font-size: 11px; 
+    color: #e6edf3; 
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2); 
+}
+
+.about-list { list-style: none; padding: 0; }
+.about-list li { 
+    margin-bottom: 8px; 
+    font-size: 13px; 
+    color: var(--text-muted); 
+    display: flex; 
+    gap: 12px; 
+    align-items: baseline; 
+}
+
+/* Базовые стили лейбла */
+.about-list strong { 
+    color: var(--text-main);
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/* Настройка ширины под языки (чтобы было красиво везде) */
+/* EN: Самое длинное слово "Streaming:" (~80px) */
+html[lang="en"] .about-list strong { min-width: 90px; }
+
+/* DE: Самое длинное "Diff-Ansicht:" (~95px) */
+html[lang="de"] .about-list strong { min-width: 105px; }
+
+/* RU: Самое длинное "Сравнение (Diff):" (~135px) */
+html[lang="ru"] .about-list strong { min-width: 145px; }
+
+.about-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.about-footer span { display: block; margin-bottom: 4px; } /* Отступ между текстом и ссылками */
+
+/* --- Co-Writer Toggle --- */
+#coWriterBtn {
+    transition: all 0.3s ease;
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+#coWriterBtn:hover {
+    color: var(--text-main);
+    background: rgba(255,255,255,0.05);
+}
+
+#coWriterBtn.active {
+    background: linear-gradient(135deg, rgba(189, 84, 255, 0.15), rgba(47, 129, 247, 0.15));
+    border-color: #bd54ff;
+    color: #d2a8ff;
+    text-shadow: 0 0 8px rgba(189, 84, 255, 0.4);
+    font-weight: 600;
+}
+
+/* --- Co-Writer Active Output Styles --- */
+.panel.cowriter-active {
+    border-color: #bd54ff !important;
+    box-shadow: 0 0 20px rgba(189, 84, 255, 0.15);
+    transition: all 0.3s ease;
+}
+
+.panel.cowriter-active .panel-header {
+    background: linear-gradient(90deg, rgba(189, 84, 255, 0.15) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(189, 84, 255, 0.3);
+}
+
+.panel.cowriter-active .panel-title::after {
+    content: attr(data-badge);
+    display: inline-block;
+    font-size: 9px;
+    background: #bd54ff;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+    box-shadow: 0 2px 5px rgba(189, 84, 255, 0.4);
+    animation: fadeInBadge 0.3s ease-out;
+}
+
+.panel.cowriter-active .editor-container {
+    background: rgba(189, 84, 255, 0.02); /* Едва заметный тинт фона */
+}
+
+@keyframes fadeInBadge {
+    from { opacity: 0; transform: translateX(-5px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* --- MAGIC STREAMING FX (Focused Beam) --- */
+.panel.streaming-fx {
+    border: 3px solid transparent !important;
+    border-radius: 8px;
+    
+    /* DARK MODE: Яркий неон */
+    background-image: linear-gradient(var(--bg-panel), var(--bg-panel)), 
+                      linear-gradient(90deg, #bd54ff, #ff7eb3, #42a5f5, #bd54ff);
+    
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-size: 300% 100%;
+    
+    /* FIX: Уменьшили размытие (blur) с 30px до 15px. Теперь свечение плотное и не лезет на соседей */
+    box-shadow: 0 0 15px -2px rgba(189, 84, 255, 0.6);
+                
+    animation: vibrantFlow 3s linear infinite, focusedBreath 2s ease-in-out infinite alternate;
+}
+
+@keyframes vibrantFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+@keyframes focusedBreath {
+    from { box-shadow: 0 0 10px -2px rgba(189, 84, 255, 0.4); }
+    to   { box-shadow: 0 0 20px -2px rgba(189, 84, 255, 0.8); }
+}
+
+/* --- LIGHT MODE (Deep Saturated) --- */
+[data-theme="light"] .panel.streaming-fx {
+    /* 1. ЦВЕТА: Берем максимально насыщенные, почти "чернильные" неоновые тона.
+       Вместо стандартного фиолетового (#7c3aed) берем Глубокий Индиго (#4c1d95) и Ядреную Фуксию (#be185d). 
+       На белом это будет выглядеть очень контрастно и дорого. */
+    background-image: linear-gradient(#ffffff, #ffffff), 
+                      linear-gradient(90deg, #6d28d9, #db2777, #2563eb, #6d28d9); 
+                      
+    /* 2. ТЕНЬ: Делаем её гораздо плотнее (opacity 0.5 вместо 0.25). */
+    box-shadow: 0 0 15px rgba(109, 40, 217, 0.5);
+                
+    animation: vibrantFlow 3s linear infinite, deepBreathLight 2s ease-in-out infinite alternate;
+}
+
+@keyframes deepBreathLight {
+    /* Пульсация теперь меняет насыщенность тени от "Заметной" до "Очень заметной" */
+    from { box-shadow: 0 0 12px rgba(109, 40, 217, 0.4); }
+    to   { box-shadow: 0 0 22px rgba(109, 40, 217, 0.75); }
+}
+
+/* --- LIGHT MODE ADJUSTMENTS --- */
+
+/* 1. Стриминг в светлой теме (Электрик) */
+[data-theme="light"] .panel.streaming-fx {
+    box-shadow: inset 0 0 20px rgba(9, 105, 218, 0.05);
+}
+[data-theme="light"] .panel.streaming-fx::before,
+[data-theme="light"] .panel.streaming-fx::after {
+    background: linear-gradient(45deg, #7c3aed, #2563eb, #0ea5e9, #7c3aed);
+}
+
+/* 2. Статика в светлой теме (Когда не стримим) */
+[data-theme="light"] .panel.cowriter-active {
+    border: 2px solid #7c3aed !important; 
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.25);
+}
+
+[data-theme="light"] .panel.cowriter-active .panel-header {
+    /* FIX: Делаем градиент ГУЩЕ. Начинаем с насыщенного лавандового (#eaddff), а не с белесого. */
+    background: linear-gradient(90deg, #eaddff 0%, rgba(255,255,255,0) 100%);
+    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+[data-theme="light"] .panel.cowriter-active .panel-title::after {
+    background: #7c3aed; /* Темный фиолетовый для бейджа */
+    color: white;
+}
+
+/* --- Co-Writer Panel --- */
+.cowriter-bar {
+    background: rgba(189, 84, 255, 0.03);
+    /* FIX: Заменили кислотную линию на мягкий полупрозрачный разделитель (30% opacity) */
+    border-bottom: 1px solid rgba(189, 84, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    height: 285px; 
+    flex-shrink: 0;
+    transition: height 0.3s ease; /* Анимация сворачивания */
+    overflow: hidden; /* Скрываем содержимое при сворачивании */
+}
+
+.cowriter-bar.collapsed {
+    height: 34px; /* Высота только заголовка */
+    border-bottom: 1px solid rgba(189, 84, 255, 0.3);
+}
+
+.cowriter-bar.collapsed #coArrow {
+    transform: rotate(0deg) !important; /* Поворот стрелки */
+}
+
+.cowriter-header {
+    padding: 6px 12px; /* Исправлено для выравнивания с .sys-header */
+    background: rgba(189, 84, 255, 0.08);
+    border-bottom: 1px solid rgba(189, 84, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Фиолетовый Select */
+.cowriter-select {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(189, 84, 255, 0.3);
+    color: #d2a8ff;
+    font-size: 11px;
+    height: 24px;
+    border-radius: 4px;
+    flex: 1;
+    max-width: 200px;
+    outline: none;
+}
+.cowriter-select:focus { border-color: #bd54ff; }
+.cowriter-select option { background: #1c1c24; color: #d2a8ff; }
+
+/* Микро-кнопки */
+.btn-icon-sm {
+    background: transparent;
+    border: 1px solid transparent;
+    color: rgba(210, 168, 255, 0.6);
+    cursor: pointer;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+.btn-icon-sm:hover {
+    background: rgba(189, 84, 255, 0.15);
+    color: #d2a8ff;
+    border-color: rgba(189, 84, 255, 0.3);
+}
+
+#coWriterEditor {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: #e6edf3;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 10px;
+    border: none;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+}
+
+/* --- Balance Widget Animation --- */
+.balance-slider {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Пружинистый эффект */
+    height: 16px; /* Высота одной строки */
+}
+
+.balance-slider div {
+    height: 16px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+/* Класс для переключения состояния */
+.balance-slider.show-session {
+    transform: translateY(-16px);
+}
+
+/* --- Settings Modal UI --- */
+.settings-group {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border); /* Линия-разделитель */
+}
+
+/* Убираем линию у последней группы настроек (Currency), так как дальше идет Футер */
+.settings-group:last-of-type {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.settings-label {
+    font-size: 11px; /* Чуть меньше */
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em; /* Больше воздуха в буквах */
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0.8;
+}
+
+.currency-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px; /* Увеличили зазор между карточками */
+}
+
+.currency-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px; /* Больше воздуха внутри карточки */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.currency-card:hover {
+    border-color: var(--text-muted);
+    background: rgba(255,255,255,0.02);
+}
+
+.currency-card.active {
+    border-color: var(--accent);
+    background: rgba(47, 129, 247, 0.1);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.currency-card input[type="radio"] { display: none; }
+
+.currency-icon {
+    font-size: 20px; /* Чуть крупнее иконка */
+    width: 24px;
+    text-align: center;
+}
+
+.currency-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.currency-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-main);
+    white-space: nowrap; /* FIX: Запрещаем перенос текста на новую строку */
+}
+
+.currency-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+.rate-input-container {
+    margin-top: 12px;
+    background: rgba(255,255,255,0.03);
+    padding: 12px;
+    border-radius: 6px;
+    border: none !important; /* <--- ЖЕСТКИЙ ЗАПРЕТ НА РАМКУ */
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.styled-input {
+    width: 100%;
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.styled-input:focus { border-color: var(--accent); }
